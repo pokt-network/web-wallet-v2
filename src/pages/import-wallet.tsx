@@ -5,10 +5,11 @@ import { ChevronDown, Eye, Upload } from "lucide-react";
 import { Input } from "@/components/input";
 import { Title } from "@/components/title";
 import { Button } from "@/components/button";
+import { Container } from "@/components/container";
 
 export function ImportWallet(): React.ReactNode {
   return (
-    <div className="max-w-md mx-auto text-pocket-gray flex flex-col gap-4 w-full">
+    <Container>
       <Title>Import Wallet</Title>
 
       <p className="text-center">Select a method to access your account</p>
@@ -57,6 +58,6 @@ export function ImportWallet(): React.ReactNode {
           {"Create Wallet"}
         </Link>
       </p>
-    </div>
+    </Container>
   );
 }

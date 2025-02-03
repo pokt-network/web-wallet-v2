@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 
 export function Home(): JSX.Element {
   return (
-    <div className="max-w-sm mx-auto text-center flex flex-col gap-4">
+    <div className="max-w-sm mx-auto text-center flex flex-col gap-4 py-16 px-4 lg:px-0">
       <Title>
         Welcome to
         <br />

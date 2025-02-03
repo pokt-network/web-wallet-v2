@@ -6,6 +6,7 @@ import { Input } from "@/components/input";
 import { Title } from "@/components/title";
 import { Alert } from "@/components/alert";
 import { Button } from "@/components/button";
+import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
 import { KeyManager } from "@pokt-foundation/pocketjs-signer";
 
@@ -29,7 +30,7 @@ export function CreateWallet(): JSX.Element {
   }
 
   return (
-    <div className="max-w-md mx-auto text-pocket-gray flex flex-col gap-4">
+    <Container>
       <Title>Create Wallet</Title>
 
       <p>Create a passphrase to protect your wallet.</p>
@@ -68,6 +69,6 @@ export function CreateWallet(): JSX.Element {
           Import Wallet
         </Link>
       </p>
-    </div>
+    </Container>
   );
 }

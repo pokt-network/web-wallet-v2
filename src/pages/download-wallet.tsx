@@ -5,6 +5,7 @@ import { navigate } from "wouter/use-browser-location";
 import { Title } from "@/components/title";
 import { Alert } from "@/components/alert";
 import { Button } from "@/components/button";
+import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
 import {
   AlertDialog,
@@ -29,7 +30,7 @@ export function DownloadWallet(): React.ReactNode {
   }
 
   return (
-    <div className="max-w-md mx-auto text-pocket-gray text-center flex flex-col gap-4">
+    <Container>
       <Title>Download Key File</Title>
 
       <p className="text-left">Download the key file to continue</p>
@@ -81,7 +82,7 @@ export function DownloadWallet(): React.ReactNode {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Container>
   );
 }
 

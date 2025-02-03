@@ -1,7 +1,7 @@
 export function Footer(): JSX.Element {
   return (
-    <div className="bg-pocket-blue text-white py-16">
-      <div className="flex justify-between max-w-3xl mx-auto gap-8">
+    <div className="bg-pocket-blue text-white py-16 px-4">
+      <div className="flex lg:flex-row flex-col-reverse justify-between max-w-3xl mx-auto gap-8">
         <div>
           <div>
             <h3 className="font-medium text-lg">Stay Updated</h3>
