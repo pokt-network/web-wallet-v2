@@ -6,6 +6,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  color: var(--color-pocket-gray);
+}
+
 @font-face {
   font-family: "IBM Plex Sans";
   src: url(/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf) format("truetype");
