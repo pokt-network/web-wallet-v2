@@ -1,26 +1,19 @@
 import React from "react";
-import { Eye } from "lucide-react";
 
-import { Input } from "@/components/input";
 import { Button } from "@/components/button";
+import { PasswordInput } from "@/components/password-input";
 
 export function PrivateKey(): React.ReactNode {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium">Private key</p>
-        <div className="relative">
-          <Input placeholder="Private key" />
-          <Eye className="absolute top-1/2 right-4 transform -translate-y-1/2 w-6 h-6 text-pocket-gray/50" />
-        </div>
+        <PasswordInput placeholder="Private key" />
       </div>
 
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium">Session password</p>
-        <div className="relative">
-          <Input placeholder="Session password" />
-          <Eye className="absolute top-1/2 right-4 transform -translate-y-1/2 w-6 h-6 text-pocket-gray/50" />
-        </div>
+        <PasswordInput placeholder="Session password" />
       </div>
 
       <p className="text-sm">

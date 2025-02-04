@@ -2,13 +2,13 @@ import { Link } from "wouter";
 import { useState } from "react";
 import { navigate } from "wouter/use-browser-location";
 
-import { Input } from "@/components/input";
 import { Title } from "@/components/title";
 import { Alert } from "@/components/alert";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
 import { KeyManager } from "@pokt-foundation/pocketjs-signer";
+import { PasswordInput } from "@/components/password-input";
 
 export function CreateWallet(): JSX.Element {
   const { setAccount, setPortablePrivateKey } = useAccount();
@@ -35,15 +35,13 @@ export function CreateWallet(): JSX.Element {
 
       <p>Create a passphrase to protect your wallet.</p>
 
-      <Input
-        type="password"
+      <PasswordInput
         placeholder="Password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
       />
 
-      <Input
-        type="password"
+      <PasswordInput
         placeholder="Confirm password"
         value={confirmPassword}
         onChange={(event) => setConfirmPassword(event.target.value)}

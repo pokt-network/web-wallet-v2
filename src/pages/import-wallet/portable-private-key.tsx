@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Eye, FileKey2, Upload, XIcon } from "lucide-react";
+import { FileKey2, Upload, XIcon } from "lucide-react";
 
 import { cx } from "@/cx";
-import { Input } from "@/components/input";
 import { Button } from "@/components/button";
+import { PasswordInput } from "@/components/password-input";
 
 export function PortablePrivateKey(): React.ReactNode {
   return (
@@ -13,10 +13,7 @@ export function PortablePrivateKey(): React.ReactNode {
 
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium">Password</p>
-        <div className="relative">
-          <Input placeholder="Password" />
-          <Eye className="absolute top-1/2 right-4 transform -translate-y-1/2 w-6 h-6 text-pocket-gray/50" />
-        </div>
+        <PasswordInput placeholder="Password" />
       </div>
 
       <p className="text-sm pt-2">
