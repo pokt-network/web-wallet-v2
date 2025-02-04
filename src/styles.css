@@ -68,4 +68,28 @@ body {
   --color-pocket-yellow: #d99e20;
   --color-pocket-gray: #575c67;
   --color-pocket-white: #fffffa;
+
+  /* Animation */
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
 }
