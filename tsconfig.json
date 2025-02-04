@@ -31,7 +31,11 @@
     /* Import aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // This library does not export the types properly
+      "@pokt-foundation/pocketjs-signer": [
+        "./node_modules/@pokt-foundation/pocketjs-signer/dist/src/index.d.ts"
+      ]
     }
   },
   "include": ["src"]
