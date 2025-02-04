@@ -75,8 +75,8 @@ export function DownloadWallet(): React.ReactNode {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex items-center justify-center gap-2">
-            <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
-            <AlertDialogAction className="w-full" onClick={() => window.history.back()}>
+            <AlertDialogCancel className="w-full mt-0">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="w-full mt-0" onClick={() => window.history.back()}>
               Go back
             </AlertDialogAction>
           </AlertDialogFooter>
