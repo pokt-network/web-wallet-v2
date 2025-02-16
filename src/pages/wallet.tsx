@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   Coins,
@@ -12,16 +12,31 @@ import {
   Router,
 } from "lucide-react";
 
+import { provider } from "@/rpc";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
+import { useAccount } from "@/context/account-context";
 
 export function Wallet(): React.ReactNode {
+  const [balance, setBalance] = useState<number | null>(null);
+  const { account } = useAccount();
+
+  useEffect(() => {
+    if (!account) return;
+
+    provider.getBalance(account.getAddress()).then((result) => {
+      if (result.ok) {
+        setBalance(result.data);
+      }
+    });
+  }, [account]);
+
   return (
     <Container>
       <div>
         <p className="opacity-80 text-xs text-center">Current balance</p>
         <div className="font-bold text-center flex gap-2 items-center justify-center">
-          <div className="font-mono text-4xl">0.00</div>
+          <div className="font-mono text-4xl">{balance}</div>
           <div className="opacity-80 text-xl">POKT</div>
         </div>
       </div>
