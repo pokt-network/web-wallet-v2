@@ -5,29 +5,69 @@ import { FileKey2, Upload, XIcon } from "lucide-react";
 import { cx } from "@/cx";
 import { Button } from "@/components/button";
 import { PasswordInput } from "@/components/password-input";
+import { navigate } from "wouter/use-browser-location";
+import { KeyManager } from "@pokt-foundation/pocketjs-signer";
+import { useAccount } from "@/context/account-context";
 
 export function PortablePrivateKey(): React.ReactNode {
+  const [password, setPassword] = useState("");
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [importingWallet, setImportingWallet] = useState(false);
+  const { setAccount, setPortablePrivateKey } = useAccount();
+
+  async function importWallet(): Promise<void> {
+    if (!file) return;
+    setImportingWallet(true);
+
+    const ppk = await file.text();
+    const account = await KeyManager.fromPPK({ ppk, password });
+
+    setAccount(account);
+    setPortablePrivateKey(ppk);
+
+    setImportingWallet(false);
+    navigate("/wallet");
+  }
+
+  if (importingWallet) {
+    return (
+      <div className="flex flex-col gap-2">
+        <p>Importing wallet...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2">
-      <UploadFile />
+      <UploadFile file={file} setFile={setFile} />
 
       <div className="flex flex-col gap-1">
         <p className="text-sm font-medium">Password</p>
-        <PasswordInput placeholder="Password" />
+        <PasswordInput
+          placeholder="Password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
       </div>
 
       <p className="text-sm pt-2">
         When you created the portable private key, you set a password. Enter it here to import
       </p>
 
-      <Button className="w-full">Import wallet</Button>
+      <Button className="w-full" disabled={!file || !password} onClick={importWallet}>
+        Import wallet
+      </Button>
     </div>
   );
 }
 
-function UploadFile(): React.ReactNode {
-  const [file, setFile] = useState<File | undefined>(undefined);
-
+function UploadFile({
+  file,
+  setFile,
+}: {
+  file: File | undefined;
+  setFile: (file: File | undefined) => void;
+}): React.ReactNode {
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
     onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
     accept: {
