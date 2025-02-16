@@ -1,7 +1,6 @@
 import { z } from "zod";
+import { env } from "./env";
 import { safeAsyncExecutor } from "./utils/result";
-
-const RPC_URL = "https://rpc.testnet.pokt.network/lb/6d6f727365";
 
 /**
  * The available routes for the RPC.
@@ -16,7 +15,7 @@ enum Routes {
  * @returns {Promise<number>} - The balance.
  * */
 async function getBalance(address: string): Promise<number> {
-  const response = await fetchRPC(RPC_URL + Routes.QueryBalance, { address });
+  const response = await fetchRPC(env.RPC_URL + Routes.QueryBalance, { address });
   return getBalanceResponse.parse(response).balance;
 }
 
