@@ -17,8 +17,10 @@ import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
 
+export const UPOKT = 1_000_000;
+
 export function Wallet(): React.ReactNode {
-  const [balance, setBalance] = useState<number | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
   const { account } = useAccount();
 
   useEffect(() => {
@@ -26,7 +28,12 @@ export function Wallet(): React.ReactNode {
 
     provider.getBalance(account.getAddress()).then((result) => {
       if (result.ok) {
-        setBalance(result.data);
+        const pokt = result.data / UPOKT;
+        setBalance(
+          pokt.toLocaleString("en-US", {
+            maximumFractionDigits: 2,
+          })
+        );
       }
     });
   }, [account]);
@@ -36,7 +43,7 @@ export function Wallet(): React.ReactNode {
       <div>
         <p className="opacity-80 text-xs text-center">Current balance</p>
         <div className="font-bold text-center flex gap-2 items-center justify-center">
-          <div className="font-mono text-4xl">{balance}</div>
+          <div className="text-4xl">{balance}</div>
           <div className="opacity-80 text-xl">POKT</div>
         </div>
       </div>
