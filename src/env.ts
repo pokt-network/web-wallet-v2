@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const schema = z.object({
-  RPC_URL: z.string(),
+  RPC_URL: z.string().url(),
 });
 
 export const env = schema.parse({
