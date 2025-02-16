@@ -16,8 +16,7 @@ import { provider } from "@/rpc";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
-
-export const UPOKT = 1_000_000;
+import { formatPOKT } from "@/utils/format-pokt";
 
 export function Wallet(): React.ReactNode {
   const [balance, setBalance] = useState<string | null>(null);
@@ -28,12 +27,7 @@ export function Wallet(): React.ReactNode {
 
     provider.getBalance(account.getAddress()).then((result) => {
       if (result.ok) {
-        const pokt = result.data / UPOKT;
-        setBalance(
-          pokt.toLocaleString("en-US", {
-            maximumFractionDigits: 2,
-          })
-        );
+        setBalance(formatPOKT(result.data));
       }
     });
   }, [account]);
