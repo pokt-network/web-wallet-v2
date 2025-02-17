@@ -1,3 +1,4 @@
+import React from "react";
 import { Route, Switch } from "wouter";
 import { Layout } from "@/components/layout";
 
@@ -7,7 +8,7 @@ import { ImportWallet } from "./pages/import-wallet";
 import { CreateWallet } from "./pages/create-wallet";
 import { DownloadWallet } from "./pages/download-wallet";
 
-export function Routes(): JSX.Element {
+export function Routes(): React.ReactNode {
   return (
     <Layout>
       <Switch>
