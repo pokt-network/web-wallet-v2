@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  ArrowDownToLine,
   ArrowUpRight,
   Coins,
   Copy,
@@ -12,11 +13,12 @@ import {
   Router,
 } from "lucide-react";
 
-import { provider } from "@/rpc";
+import { provider, Transaction } from "@/rpc";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useAccount } from "@/context/account-context";
 import { formatPOKT } from "@/utils/format-pokt";
+import { formatAddress } from "@/utils/format-address";
 
 export function Wallet(): React.ReactNode {
   const [balance, setBalance] = useState<string | null>(null);
@@ -112,16 +114,114 @@ export function Wallet(): React.ReactNode {
         </Button>
       </div>
 
+      <Transactions />
+
+      <Button className="gap-2" variant="yellow">
+        Logout
+        <LogOut className="w-4 h-4" />
+      </Button>
+    </Container>
+  );
+}
+
+type TransactionWithType = Transaction & { type: "received" | "sent" };
+async function getTransactions(address: string): Promise<TransactionWithType[]> {
+  const [received, sent] = await Promise.all([
+    provider.getTransactions({
+      address,
+      page: 0,
+      per_page: 10,
+      received: true,
+      order: "desc",
+    }),
+    provider.getTransactions({
+      address,
+      page: 0,
+      per_page: 10,
+      received: false,
+      order: "desc",
+    }),
+  ]);
+
+  const receivedTransactions = received.txs.map((transaction) => ({
+    ...transaction,
+    type: "received" as const,
+  }));
+
+  const sentTransactions = sent.txs.map((transaction) => ({
+    ...transaction,
+    type: "sent" as const,
+  }));
+
+  const transactions = [...receivedTransactions, ...sentTransactions];
+  return transactions.sort((a, b) => b.height - a.height);
+}
+
+function Transactions(): React.ReactNode {
+  const { account } = useAccount();
+  const [transactions, setTransactions] = useState<TransactionWithType[] | null>(null);
+
+  useEffect(() => {
+    if (!account) return;
+
+    getTransactions(account.getAddress()).then((result) => setTransactions(result));
+  }, [account]);
+
+  if (!transactions) {
+    return (
       <div className="text-pocket-gray p-4 bg-pocket-gray/5 flex items-center justify-center rounded-lg">
         <div className="flex flex-col">
           <p className="font-medium">No transactions found</p>
           <p>Once you start making transactions, they will appear here.</p>
         </div>
       </div>
-      <Button className="gap-2" variant="yellow">
-        Logout
-        <LogOut className="w-4 h-4" />
-      </Button>
-    </Container>
+    );
+  }
+
+  return (
+    <div className="text-black flex flex-col bg-pocket-gray/3 rounded-lg border border-pocket-gray/10 overflow-hidden">
+      {transactions.map((transaction, index) => {
+        if (transaction.stdTx.msg.type !== "pos/Send") {
+          return null;
+        }
+
+        return (
+          <div
+            key={transaction.hash}
+            className={`flex justify-between items-center p-4 cursor-pointer duration-300 hover:bg-white/80 ${
+              index === 0 ? "" : "border-t border-pocket-gray/10"
+            }`}
+          >
+            <div className="flex gap-4 items-center">
+              {transaction.type === "received" ? (
+                <ArrowDownToLine className="w-6 h-6e" />
+              ) : (
+                <ArrowUpRight className="w-6 h-6" />
+              )}
+
+              <div className="flex flex-col">
+                <p className="text-xs font-medium capitalize">{transaction.type}</p>
+                <p className="text-xs truncate max-w-32 text-pocket-gray">
+                  From:{" "}
+                  {
+                    <span className="hover:text-pocket-blue cursor-pointer">
+                      {formatAddress(transaction.stdTx.msg.value.from_address)}
+                    </span>
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <p className="text-xs font-medium">
+                {transaction.type === "received" ? "" : "-"}
+                {formatPOKT(transaction.stdTx.msg.value.amount)} POKT
+              </p>
+              <p className="text-xs text-pocket-gray text-right">$1,000.00 USD</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
