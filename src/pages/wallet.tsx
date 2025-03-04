@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ArrowDownToLine,
   ArrowUpRight,
@@ -139,7 +139,8 @@ export function Wallet(): React.ReactNode {
   );
 }
 
-type TransactionWithType = Transaction & { type: "received" | "sent" };
+type TransactionType = "received" | "sent";
+type TransactionWithType = Transaction & { type: TransactionType };
 async function getTransactions(address: string): Promise<TransactionWithType[]> {
   const [received, sent] = await Promise.all([
     provider.getTransactions({
@@ -172,17 +173,52 @@ async function getTransactions(address: string): Promise<TransactionWithType[]> 
   return transactions.sort((a, b) => b.height - a.height);
 }
 
-function Transactions(): React.ReactNode {
+function useTransactions(): UseQueryResult<TransactionWithType[], Error> {
   const { account } = useAccount();
-  const [transactions, setTransactions] = useState<TransactionWithType[] | null>(null);
 
-  useEffect(() => {
-    if (!account) return;
+  if (account === null) {
+    throw new Error("No account");
+  }
 
-    getTransactions(account.getAddress()).then((result) => setTransactions(result));
-  }, [account]);
+  const address = account.getAddress();
 
-  if (!transactions) {
+  return useQuery({
+    queryKey: ["transactions", address],
+    queryFn: async () => getTransactions(address),
+  });
+}
+
+function Transactions(): React.ReactNode {
+  const { data: transactions, error, isLoading, refetch } = useTransactions();
+
+  if (error) {
+    return (
+      <div className="text-red-500 p-4 bg-red-100/50 rounded-lg flex items-center gap-4">
+        <div className="w-full">
+          <p>An error occurred while fetching transactions:</p>
+          <p>
+            <b>{error.name}:</b> {error.message}
+          </p>
+        </div>
+        <button
+          className="bg-red-500/10 rounded-lg px-2 py-1 font-medium text-red-500 cursor-pointer text-sm"
+          onClick={() => refetch()}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-16">
+        <Loader2 className="size-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!transactions || transactions.length === 0) {
     return (
       <div className="text-pocket-gray p-4 bg-pocket-gray/5 flex items-center justify-center rounded-lg">
         <div className="flex flex-col">
