@@ -61,7 +61,7 @@ export function PortablePrivateKey(): React.ReactNode {
 
       <Button
         className="w-full"
-        disabled={!file || !password || importWallet.isPending}
+        disabled={!file || !password || importWallet.isPending || importWallet.isError}
         onClick={async () => {
           if (!file) return;
 
