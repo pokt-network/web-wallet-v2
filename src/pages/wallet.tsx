@@ -9,9 +9,11 @@ import {
   HandCoins,
   Key,
   Landmark,
+  Loader2,
   LogOut,
   Router,
 } from "lucide-react";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 import { provider, Transaction } from "@/rpc";
 import { Button } from "@/components/button";
@@ -20,28 +22,41 @@ import { useAccount } from "@/context/account-context";
 import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
 
-export function Wallet(): React.ReactNode {
-  const [balance, setBalance] = useState<string | null>(null);
+function useBalance(): UseQueryResult<string, Error> {
   const { account } = useAccount();
 
-  useEffect(() => {
-    if (!account) return;
+  if (account === null) {
+    throw new Error("No account");
+  }
 
-    provider.getBalance(account.getAddress()).then((result) => {
-      if (result.ok) {
-        setBalance(formatPOKT(result.data));
-      }
-    });
-  }, [account]);
+  const address = account.getAddress();
+
+  return useQuery({
+    queryKey: ["balance", address],
+    queryFn: async () => {
+      const balance = await provider.getBalance(address);
+      return formatPOKT(balance);
+    },
+  });
+}
+
+export function Wallet(): React.ReactNode {
+  const { data, isLoading } = useBalance();
 
   return (
     <Container>
       <div>
         <p className="opacity-80 text-xs text-center">Current balance</p>
-        <div className="font-bold text-center flex gap-2 items-center justify-center">
-          <div className="text-4xl">{balance}</div>
-          <div className="opacity-80 text-xl">POKT</div>
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-16">
+            <Loader2 className="size-8 animate-spin" />
+          </div>
+        ) : (
+          <div className="font-bold text-center flex gap-2 items-center justify-center">
+            <div className="text-4xl">{data}</div>
+            <div className="text-xl">POKT</div>
+          </div>
+        )}
       </div>
       <div className="flex gap-4 w-full justify-between">
         <div className="flex flex-gap items-center justify-between gap-2">

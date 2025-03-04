@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { env } from "./env";
-import { safeAsyncExecutor } from "./utils/result";
 
 /**
  * The available routes for the RPC.
@@ -21,7 +20,7 @@ async function getBalance(address: string): Promise<bigint> {
 }
 
 const getBalanceResponse = z.object({
-  balance: z.string().transform(BigInt),
+  balance: z.coerce.string().transform(BigInt),
 });
 
 /**
@@ -147,6 +146,6 @@ async function fetchRPC(url: string, body: Record<string, unknown>): Promise<unk
 }
 
 export const provider = {
-  getBalance: safeAsyncExecutor(getBalance),
-  getTransactions: getTransactions,
+  getBalance,
+  getTransactions,
 };

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { Routes } from "./routes";
 import { AccountContextProvider } from "./context/account-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = document.getElementById("root");
 
@@ -10,10 +11,14 @@ if (root === null) {
   throw new Error("Root element not found");
 }
 
+const queryClient = new QueryClient();
+
 createRoot(root).render(
   <StrictMode>
-    <AccountContextProvider>
-      <Routes />
-    </AccountContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <AccountContextProvider>
+        <Routes />
+      </AccountContextProvider>
+    </QueryClientProvider>
   </StrictMode>
 );
