@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { FileKey2, Upload, XIcon } from "lucide-react";
+import { FileKey2, Loader2, Upload, XIcon } from "lucide-react";
 
 import { cx } from "@/cx";
 import { Button } from "@/components/button";
@@ -8,34 +8,37 @@ import { PasswordInput } from "@/components/password-input";
 import { navigate } from "wouter/use-browser-location";
 import { KeyManager } from "@pokt-foundation/pocketjs-signer";
 import { useAccount } from "@/context/account-context";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+
+function useImportWallet(): UseMutationResult<
+  KeyManager,
+  Error,
+  {
+    ppk: string;
+    password: string;
+  }
+> {
+  const { setAccount } = useAccount();
+
+  return useMutation({
+    mutationFn: async ({ ppk, password }: { ppk: string; password: string }) => {
+      return KeyManager.fromPPK({ ppk, password });
+    },
+    onSuccess: (account) => {
+      setAccount(account);
+      navigate("/wallet");
+    },
+  });
+}
 
 export function PortablePrivateKey(): React.ReactNode {
+  const importWallet = useImportWallet();
   const [password, setPassword] = useState("");
-  const [file, setFile] = useState<File | undefined>(undefined);
-  const [importingWallet, setImportingWallet] = useState(false);
-  const { setAccount, setPortablePrivateKey } = useAccount();
+  const [file, setFile] = useState<File | null>(null);
 
-  async function importWallet(): Promise<void> {
-    if (!file) return;
-    setImportingWallet(true);
-
-    const ppk = await file.text();
-    const account = await KeyManager.fromPPK({ ppk, password });
-
-    setAccount(account);
-    setPortablePrivateKey(ppk);
-
-    setImportingWallet(false);
-    navigate("/wallet");
-  }
-
-  if (importingWallet) {
-    return (
-      <div className="flex flex-col gap-2">
-        <p>Importing wallet...</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    importWallet.reset();
+  }, [password, file]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -54,8 +57,19 @@ export function PortablePrivateKey(): React.ReactNode {
         When you created the portable private key, you set a password. Enter it here to import
       </p>
 
-      <Button className="w-full" disabled={!file || !password} onClick={importWallet}>
-        Import wallet
+      {importWallet.error && <p className="text-sm text-red-500">{importWallet.error.message}</p>}
+
+      <Button
+        className="w-full"
+        disabled={!file || !password || importWallet.isPending}
+        onClick={async () => {
+          if (!file) return;
+
+          const ppk = await file.text();
+          importWallet.mutate({ ppk, password });
+        }}
+      >
+        {importWallet.isPending ? <Loader2 className="size-6 animate-spin" /> : "Import Wallet"}
       </Button>
     </div>
   );
@@ -65,11 +79,17 @@ function UploadFile({
   file,
   setFile,
 }: {
-  file: File | undefined;
-  setFile: (file: File | undefined) => void;
+  file: File | null;
+  setFile: (file: File | null) => void;
 }): React.ReactNode {
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
-    onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
+    onDrop: (acceptedFiles) => {
+      const firstFile = acceptedFiles[0];
+
+      if (firstFile) {
+        setFile(firstFile);
+      }
+    },
     accept: {
       "application/json": [".json"],
     },
@@ -89,7 +109,7 @@ function UploadFile({
             <p className="text-xs">{file.size} bytes</p>
           </div>
         </div>
-        <button className="text-sm cursor-pointer" onClick={() => setFile(undefined)}>
+        <button className="text-sm cursor-pointer" onClick={() => setFile(null)}>
           <XIcon className="w-4 h-4" />
         </button>
       </div>
