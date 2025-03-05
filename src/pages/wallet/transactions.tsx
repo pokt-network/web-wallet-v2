@@ -1,3 +1,4 @@
+import { Button } from "@/components/button";
 import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
 import { TransactionType, useTransactions } from "./use-transactions";
@@ -15,12 +16,9 @@ export function Transactions(): React.ReactNode {
             <b>{error.name}:</b> {error.message}
           </p>
         </div>
-        <button
-          className="bg-red-500/10 rounded-lg px-2 py-1 font-medium text-red-500 cursor-pointer text-sm"
-          onClick={() => refetch()}
-        >
+        <Button variant="red" onClick={() => refetch()}>
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

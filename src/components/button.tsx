@@ -29,6 +29,7 @@ const buttonVariants = tv({
         "hover:bg-pocket-yellow/90",
         "disabled:opacity-50",
       ],
+      red: "bg-red-500/10 text-red-500",
     },
   },
   defaultVariants: {
