@@ -89,7 +89,7 @@ function Transaction({
           <ArrowUpRight className="size-6" />
         )}
 
-        <div className="flex flex-col">
+        <div>
           <p className="text-xs font-medium capitalize">{type}</p>
           <p className="text-xs truncate max-w-32 text-pocket-gray">
             From: {<span className="hover:text-pocket-blue">{formatAddress(from)}</span>}
@@ -97,7 +97,7 @@ function Transaction({
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div>
         <p className="text-xs font-medium">
           {type === "received" ? "" : "-"}
           {formatPOKT(amount)} POKT
