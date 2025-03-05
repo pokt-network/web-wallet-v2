@@ -9,7 +9,7 @@ export function Transactions(): React.ReactNode {
 
   if (error) {
     return (
-      <div className="text-red-500 p-4 bg-red-100/50 rounded-lg flex items-center gap-4">
+      <div className="flex items-center gap-4 p-4 text-red-500 rounded-lg bg-red-100/50">
         <div className="w-full">
           <p>An error occurred while fetching transactions:</p>
           <p>
@@ -33,7 +33,7 @@ export function Transactions(): React.ReactNode {
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="text-pocket-gray p-4 bg-pocket-gray/5 flex items-center justify-center rounded-lg">
+      <div className="flex items-center justify-center p-4 rounded-lg text-pocket-gray bg-pocket-gray/5">
         <div className="flex flex-col">
           <p className="font-medium">No transactions found</p>
           <p>Once you start making transactions, they will appear here.</p>
@@ -43,7 +43,7 @@ export function Transactions(): React.ReactNode {
   }
 
   return (
-    <div className="text-black flex flex-col bg-pocket-gray/3 rounded-lg border border-pocket-gray/10 overflow-hidden">
+    <div className="flex flex-col overflow-hidden text-black border rounded-lg bg-pocket-gray/3 border-pocket-gray/10">
       {transactions.map((transaction, index) => {
         if (transaction.stdTx.msg.type !== "pos/Send") {
           return null;
@@ -80,7 +80,7 @@ function Transaction({
         border ? "border-t border-pocket-gray/10" : ""
       }`}
     >
-      <div className="flex gap-4 items-center">
+      <div className="flex items-center gap-4">
         {type === "received" ? (
           <ArrowDownToLine className="size-6" />
         ) : (
@@ -100,7 +100,7 @@ function Transaction({
           {type === "received" ? "" : "-"}
           {formatPOKT(amount)} POKT
         </p>
-        <p className="text-xs text-pocket-gray text-right">$1,000.00 USD</p>
+        <p className="text-xs text-right text-pocket-gray">$1,000.00 USD</p>
       </div>
     </div>
   );
