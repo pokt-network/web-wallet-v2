@@ -1,5 +1,6 @@
+import { usePrice } from "@/use-price";
 import { Button } from "@/components/button";
-import { formatPOKT } from "@/utils/format-pokt";
+import { formatPOKT, UPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
 import { TransactionType, useTransactions } from "./use-transactions";
 import { ArrowDownToLine, ArrowUpRight, Loader2 } from "lucide-react";
@@ -74,6 +75,8 @@ function Transaction({
   from: string;
   border: boolean;
 }): React.ReactNode {
+  const { data: price, isLoading } = usePrice();
+
   return (
     <div
       className={`flex justify-between items-center p-4 cursor-pointer duration-300 hover:bg-white/80 ${
@@ -100,7 +103,11 @@ function Transaction({
           {type === "received" ? "" : "-"}
           {formatPOKT(amount)} POKT
         </p>
-        <p className="text-xs text-right text-pocket-gray">$1,000.00 USD</p>
+        <p className="text-xs text-right text-pocket-gray">
+          {isLoading || price === undefined
+            ? "Loading..."
+            : "$" + (Number(amount / UPOKT) * price).toLocaleString() + " USD"}
+        </p>
       </div>
     </div>
   );
