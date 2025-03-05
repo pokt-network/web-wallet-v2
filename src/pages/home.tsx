@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 
 export function Home(): JSX.Element {
   return (
-    <div className="max-w-sm mx-auto text-center flex flex-col gap-4 py-16 px-4 lg:px-0">
+    <div className="flex flex-col max-w-sm gap-4 px-4 py-16 mx-auto text-center lg:px-0">
       <Title>
         Welcome to
         <br />
@@ -18,7 +18,7 @@ export function Home(): JSX.Element {
         cryptocurrency.
       </p>
 
-      <div className="flex items-center justify-center flex-col gap-2">
+      <div className="flex flex-col items-center justify-center gap-2">
         <Link to="/create-wallet" className="w-full">
           <Button className="w-full">Create wallet</Button>
         </Link>
