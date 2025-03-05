@@ -1,6 +1,6 @@
 import { formatPOKT } from "@/utils/format-pokt";
-import { useTransactions } from "./use-transactions";
 import { formatAddress } from "@/utils/format-address";
+import { TransactionType, useTransactions } from "./use-transactions";
 import { ArrowDownToLine, ArrowUpRight, Loader2 } from "lucide-react";
 
 export function Transactions(): React.ReactNode {
@@ -71,7 +71,7 @@ function Transaction({
   from,
   border,
 }: {
-  type: "received" | "sent";
+  type: TransactionType;
   amount: bigint;
   from: string;
   border: boolean;

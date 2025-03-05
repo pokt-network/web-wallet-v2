@@ -2,7 +2,7 @@ import { provider, Transaction } from "@/rpc";
 import { useAccount } from "@/context/account-context";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
-enum TransactionType {
+export enum TransactionType {
   sent = "sent",
   received = "received",
 }
