@@ -52,42 +52,58 @@ export function Transactions(): React.ReactNode {
         }
 
         return (
-          <div
+          <Transaction
             key={transaction.hash}
-            className={`flex justify-between items-center p-4 cursor-pointer duration-300 hover:bg-white/80 ${
-              index === 0 ? "" : "border-t border-pocket-gray/10"
-            }`}
-          >
-            <div className="flex gap-4 items-center">
-              {transaction.type === "received" ? (
-                <ArrowDownToLine className="w-6 h-6e" />
-              ) : (
-                <ArrowUpRight className="w-6 h-6" />
-              )}
-
-              <div className="flex flex-col">
-                <p className="text-xs font-medium capitalize">{transaction.type}</p>
-                <p className="text-xs truncate max-w-32 text-pocket-gray">
-                  From:{" "}
-                  {
-                    <span className="hover:text-pocket-blue cursor-pointer">
-                      {formatAddress(transaction.stdTx.msg.value.from_address)}
-                    </span>
-                  }
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <p className="text-xs font-medium">
-                {transaction.type === "received" ? "" : "-"}
-                {formatPOKT(transaction.stdTx.msg.value.amount)} POKT
-              </p>
-              <p className="text-xs text-pocket-gray text-right">$1,000.00 USD</p>
-            </div>
-          </div>
+            type={transaction.type}
+            amount={transaction.stdTx.msg.value.amount}
+            from={transaction.stdTx.msg.value.from_address}
+            border={index !== 0}
+          />
         );
       })}
+    </div>
+  );
+}
+
+function Transaction({
+  type,
+  amount,
+  from,
+  border,
+}: {
+  type: "received" | "sent";
+  amount: bigint;
+  from: string;
+  border: boolean;
+}): React.ReactNode {
+  return (
+    <div
+      className={`flex justify-between items-center p-4 cursor-pointer duration-300 hover:bg-white/80 ${
+        border ? "border-t border-pocket-gray/10" : ""
+      }`}
+    >
+      <div className="flex gap-4 items-center">
+        {type === "received" ? (
+          <ArrowDownToLine className="size-6" />
+        ) : (
+          <ArrowUpRight className="size-6" />
+        )}
+
+        <div className="flex flex-col">
+          <p className="text-xs font-medium capitalize">{type}</p>
+          <p className="text-xs truncate max-w-32 text-pocket-gray">
+            From: {<span className="hover:text-pocket-blue">{formatAddress(from)}</span>}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        <p className="text-xs font-medium">
+          {type === "received" ? "" : "-"}
+          {formatPOKT(amount)} POKT
+        </p>
+        <p className="text-xs text-pocket-gray text-right">$1,000.00 USD</p>
+      </div>
     </div>
   );
 }
