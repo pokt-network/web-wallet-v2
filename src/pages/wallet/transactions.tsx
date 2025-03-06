@@ -1,6 +1,6 @@
 import { usePrice } from "@/use-price";
 import { Button } from "@/components/button";
-import { formatPOKT, UPOKT } from "@/utils/format-pokt";
+import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
 import { TransactionType, useTransactions } from "./use-transactions";
 import { ArrowDownToLine, ArrowUpRight, Loader2 } from "lucide-react";
@@ -75,7 +75,7 @@ function Transaction({
   from: string;
   border: boolean;
 }): React.ReactNode {
-  const { data: price, isLoading } = usePrice();
+  const { price, isLoading } = usePrice({ uPOKT: amount });
 
   return (
     <div
@@ -104,9 +104,7 @@ function Transaction({
           {formatPOKT(amount)} POKT
         </p>
         <p className="text-xs text-right text-pocket-gray">
-          {isLoading || price === undefined
-            ? "Loading..."
-            : "$" + (Number(amount / UPOKT) * price).toLocaleString() + " USD"}
+          {isLoading || price === undefined ? "Loading..." : `$${price} USD`}
         </p>
       </div>
     </div>

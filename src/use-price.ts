@@ -1,20 +1,23 @@
-import { z } from "zod";
-import { env } from "./env";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { UPOKT } from "@/utils/format-pokt";
+import { usePOKTPrice } from "./use-pokt-price";
 
-export function usePrice(): UseQueryResult<number, Error> {
-  return useQuery({
-    queryKey: ["price"],
-    queryFn: async () => fetchPrice(),
-  });
+export function usePrice({ uPOKT }: { uPOKT: bigint }): {
+  price: string | undefined;
+  isLoading: boolean;
+  error: Error | null;
+} {
+  const { data: poktPrice, isLoading, error } = usePOKTPrice();
+
+  let price;
+
+  if (poktPrice !== undefined) {
+    const pokt = Number(uPOKT / UPOKT);
+    price = (pokt * poktPrice).toLocaleString();
+  }
+
+  return {
+    price,
+    isLoading,
+    error,
+  };
 }
-
-async function fetchPrice(): Promise<number> {
-  const response = await fetch(env.POKT_PRICE_API_URL);
-  const json = await response.json();
-  return responseSchema.parse(json).price;
-}
-
-const responseSchema = z.object({
-  price: z.number(),
-});
