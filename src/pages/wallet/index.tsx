@@ -7,69 +7,44 @@ import {
   HandCoins,
   Key,
   Landmark,
-  Loader2,
   LogOut,
   Router,
 } from "lucide-react";
 
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
-import { useBalance } from "./use-balance";
 import { Transactions } from "./transactions";
-import { usePrice } from "@/use-price";
-import { formatPOKT } from "@/utils/format-pokt";
 import { Address } from "./address";
+import { Balanace } from "./balance";
 
 export function Wallet(): React.ReactNode {
-  const { data, isLoading } = useBalance();
-  const { price, isLoading: priceIsLoading } = usePrice({ uPOKT: data || BigInt(0) });
-
   return (
     <Container>
-      <div>
-        <div>
-          <p className="opacity-80 text-xs text-center">Current balance</p>
-          {isLoading || data === undefined ? (
-            <div className="flex items-center justify-center h-16">
-              <Loader2 className="size-8 animate-spin" />
-            </div>
-          ) : (
-            <div className="font-bold text-center flex gap-2 items-center justify-center">
-              <div className="text-5xl">{formatPOKT(data)}</div>
-              <div className="text-2xl font-mono">POKT</div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-center font-medium">
-          ${priceIsLoading ? <Loader2 className="size-4 animate-spin" /> : price} USD
-        </div>
-      </div>
-
+      <Balanace />
       <Address />
 
-      <div className="flex gap-4 w-full justify-between">
-        <div className="flex flex-gap items-center justify-between gap-2">
+      <div className="flex justify-between w-full gap-4">
+        <div className="flex items-center justify-between gap-2 flex-gap">
           <Landmark className="size-5" />
           <div>
-            <p className="font-medium text-lg">Unstaked</p>
-            <p className="opacity-80 text-xs">Staking Status</p>
+            <p className="text-lg font-medium">Unstaked</p>
+            <p className="text-xs opacity-80">Staking Status</p>
           </div>
         </div>
 
-        <div className="flex flex-gap items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 flex-gap">
           <Coins className="size-5" />
           <div>
-            <p className="font-mono font-medium text-lg">00.00</p>
-            <p className="opacity-80 text-xs">POKT Staked</p>
+            <p className="font-mono text-lg font-medium">00.00</p>
+            <p className="text-xs opacity-80">POKT Staked</p>
           </div>
         </div>
 
-        <div className="flex flex-gap items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 flex-gap">
           <Fingerprint className="size-5" />
           <div>
-            <p className="font-medium text-lg">None</p>
-            <p className="opacity-80 text-xs">Account Type</p>
+            <p className="text-lg font-medium">None</p>
+            <p className="text-xs opacity-80">Account Type</p>
           </div>
         </div>
       </div>
