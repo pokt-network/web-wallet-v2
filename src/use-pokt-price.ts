@@ -5,7 +5,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 export function usePOKTPrice(): UseQueryResult<number, Error> {
   return useQuery({
     queryKey: ["price"],
-    queryFn: async () => fetchPrice(),
+    queryFn: fetchPrice,
   });
 }
 
