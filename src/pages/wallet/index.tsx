@@ -17,28 +17,50 @@ import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useBalance } from "./use-balance";
 import { Transactions } from "./transactions";
+import { formatAddress } from "@/utils/format-address";
+import { useAccount } from "@/context/account-context";
+import { usePrice } from "@/use-price";
+import { formatPOKT } from "@/utils/format-pokt";
 
 export function Wallet(): React.ReactNode {
+  const { account } = useAccount();
   const { data, isLoading } = useBalance();
+  const { price, isLoading: priceIsLoading } = usePrice({ uPOKT: data || BigInt(0) });
 
   return (
     <Container>
       <div>
-        <p className="opacity-80 text-xs text-center">Current balance</p>
-        {isLoading ? (
-          <div className="flex items-center justify-center h-16">
-            <Loader2 className="size-8 animate-spin" />
-          </div>
-        ) : (
-          <div className="font-bold text-center flex gap-2 items-center justify-center">
-            <div className="text-4xl">{data}</div>
-            <div className="text-xl">POKT</div>
-          </div>
-        )}
+        <div>
+          <p className="opacity-80 text-xs text-center">Current balance</p>
+          {isLoading || data === undefined ? (
+            <div className="flex items-center justify-center h-16">
+              <Loader2 className="size-8 animate-spin" />
+            </div>
+          ) : (
+            <div className="font-bold text-center flex gap-2 items-center justify-center">
+              <div className="text-5xl">{formatPOKT(data)}</div>
+              <div className="text-2xl font-mono">POKT</div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center font-medium">
+          ${priceIsLoading ? <Loader2 className="size-4 animate-spin" /> : price} USD
+        </div>
       </div>
+
+      <div className="flex flex-col items-center justify-center gap-4 w-full">
+        <div className="px-4 py-2 rounded-full bg-pocket-blue/5 relative w-auto">
+          <p className="text-pocket-blue pr-6 text-sm font-medium">
+            {account ? formatAddress(account.getAddress()) : "No account"}
+          </p>
+          <Copy className="size-4 absolute top-1/2 right-3 transform -translate-y-1/2 text-pocket-blue" />
+        </div>
+      </div>
+
       <div className="flex gap-4 w-full justify-between">
         <div className="flex flex-gap items-center justify-between gap-2">
-          <Landmark className="w-6 h-6" />
+          <Landmark className="size-5" />
           <div>
             <p className="font-medium text-lg">Unstaked</p>
             <p className="opacity-80 text-xs">Staking Status</p>
@@ -46,7 +68,7 @@ export function Wallet(): React.ReactNode {
         </div>
 
         <div className="flex flex-gap items-center justify-between gap-2">
-          <Coins className="w-6 h-6" />
+          <Coins className="size-5" />
           <div>
             <p className="font-mono font-medium text-lg">00.00</p>
             <p className="opacity-80 text-xs">POKT Staked</p>
@@ -54,7 +76,7 @@ export function Wallet(): React.ReactNode {
         </div>
 
         <div className="flex flex-gap items-center justify-between gap-2">
-          <Fingerprint className="w-6 h-6" />
+          <Fingerprint className="size-5" />
           <div>
             <p className="font-medium text-lg">None</p>
             <p className="opacity-80 text-xs">Account Type</p>
@@ -76,24 +98,6 @@ export function Wallet(): React.ReactNode {
           <p>Manage node</p>
           <Router className="w-4 h-4" />
         </Button>
-      </div>
-
-      <div className="flex flex-col gap-4 w-full">
-        <div>
-          <div className="p-4 rounded-lg bg-pocket-blue/10 relative">
-            <p className="text-xs text-pocket-blue font-medium">Address</p>
-            <p className="font-mono">0x1234567890abcdef34567890abcdef</p>
-            <Copy className="w-5 h-5 absolute top-1/2 right-6  transform -translate-y-1/2 text-pocket-blue" />
-          </div>
-        </div>
-
-        <div>
-          <div className="p-4 rounded-lg bg-pocket-blue/10 relative">
-            <p className="text-xs text-pocket-blue font-medium">Public Key</p>
-            <p className="font-mono">0x1234567890abcdef34567890abcdef</p>
-            <Copy className="w-5 h-5 absolute top-1/2 right-6  transform -translate-y-1/2 text-pocket-blue" />
-          </div>
-        </div>
       </div>
 
       <div className="flex gap-4">
