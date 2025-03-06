@@ -35,7 +35,7 @@ export function Wallet(): React.ReactNode {
         <div className="flex items-center justify-between gap-2 flex-gap">
           <Coins className="size-5" />
           <div>
-            <p className="font-mono text-lg font-medium">00.00</p>
+            <p className="text-lg font-medium">00.00</p>
             <p className="text-xs opacity-80">POKT Staked</p>
           </div>
         </div>
