@@ -2,7 +2,6 @@ import React from "react";
 import {
   ArrowUpRight,
   Coins,
-  Copy,
   FileDown,
   Fingerprint,
   HandCoins,
@@ -17,13 +16,11 @@ import { Button } from "@/components/button";
 import { Container } from "@/components/container";
 import { useBalance } from "./use-balance";
 import { Transactions } from "./transactions";
-import { formatAddress } from "@/utils/format-address";
-import { useAccount } from "@/context/account-context";
 import { usePrice } from "@/use-price";
 import { formatPOKT } from "@/utils/format-pokt";
+import { Address } from "./address";
 
 export function Wallet(): React.ReactNode {
-  const { account } = useAccount();
   const { data, isLoading } = useBalance();
   const { price, isLoading: priceIsLoading } = usePrice({ uPOKT: data || BigInt(0) });
 
@@ -49,14 +46,7 @@ export function Wallet(): React.ReactNode {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-4 w-full">
-        <div className="px-4 py-2 rounded-full bg-pocket-blue/5 relative w-auto">
-          <p className="text-pocket-blue pr-6 text-sm font-medium">
-            {account ? formatAddress(account.getAddress()) : "No account"}
-          </p>
-          <Copy className="size-4 absolute top-1/2 right-3 transform -translate-y-1/2 text-pocket-blue" />
-        </div>
-      </div>
+      <Address />
 
       <div className="flex gap-4 w-full justify-between">
         <div className="flex flex-gap items-center justify-between gap-2">
