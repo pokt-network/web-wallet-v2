@@ -12,7 +12,7 @@ enum Routes {
 /**
  * Fetches the balance of the provided address.
  * @param {string} address - The address to fetch the balance of.
- * @returns {Promise<bigint>} - The balance.
+ * @returns {Promise<bigint>} - The balance (in uPOKT).
  * */
 async function getBalance(address: string): Promise<bigint> {
   const response = await fetchRPC(env.RPC_URL + Routes.QueryBalance, { address });
