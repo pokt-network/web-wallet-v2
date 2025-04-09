@@ -1,20 +1,18 @@
-import { provider } from "@/rpc";
-import { useAccount } from "@/context/account-context";
+import * as RPC from "@/rpc";
+import { useAccount } from "@/wallet";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 export function useBalance(): UseQueryResult<bigint, Error> {
-  const { account } = useAccount();
-
-  if (account === null) {
-    throw new Error("No account");
-  }
-
-  const address = account.getAddress();
+  const { data } = useAccount();
 
   return useQuery({
-    queryKey: ["balance", address],
+    queryKey: data ? ["balance", data.address] : ["balance"],
     queryFn: async () => {
-      return provider.getBalance(address);
+      if (!data) {
+        return null;
+      }
+
+      return await RPC.getBalance(data.address);
     },
   });
 }

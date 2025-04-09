@@ -6,7 +6,6 @@ import { Title } from "@/components/title";
 import { Alert } from "@/components/alert";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
-import { useAccount } from "@/context/account-context";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,14 +17,24 @@ import {
   AlertDialogTrigger,
   AlertDialogCancel,
 } from "@/components/alert-dialong";
+import { useWalletStore } from "@/wallet";
+import { downloadFile } from "@/utils/download-file";
 
 export function DownloadWallet(): React.ReactNode {
-  const { portablePrivateKey } = useAccount();
+  const serializedWallet = useWalletStore((state) => state.serializedWallet);
   const [keyFileDownloaded, setKeyFileDownloaded] = useState(false);
 
+  if (serializedWallet === null) {
+    navigate("/create-wallet");
+    return null;
+  }
+
   async function handleDownload(): Promise<void> {
-    if (portablePrivateKey === null) return;
-    downloadFile(portablePrivateKey, "keyfile.json");
+    if (!serializedWallet) {
+      return;
+    }
+
+    downloadFile(serializedWallet, "keyfile.json");
     setKeyFileDownloaded(true);
   }
 
@@ -84,16 +93,4 @@ export function DownloadWallet(): React.ReactNode {
       </AlertDialog>
     </Container>
   );
-}
-
-function downloadFile(content: string, fileName: string): void {
-  const data = "data:text/json;charset=utf-8," + encodeURIComponent(content);
-  const downloadAnchorNode = document.createElement("a");
-
-  downloadAnchorNode.setAttribute("href", data);
-  downloadAnchorNode.setAttribute("download", fileName);
-  document.body.appendChild(downloadAnchorNode);
-
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
 }

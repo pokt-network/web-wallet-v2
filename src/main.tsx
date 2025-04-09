@@ -2,7 +2,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { Routes } from "./routes";
-import { AccountContextProvider } from "./context/account-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const root = document.getElementById("root");
@@ -16,9 +15,7 @@ const queryClient = new QueryClient();
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AccountContextProvider>
-        <Routes />
-      </AccountContextProvider>
+      <Routes />
     </QueryClientProvider>
   </StrictMode>
 );

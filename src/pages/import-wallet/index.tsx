@@ -11,7 +11,6 @@ import {
   AccordionTrigger,
 } from "@/components/accordion";
 import { PrivateKey } from "./private-key";
-import { HardwareWallet } from "./hardware-wallet";
 
 export function ImportWallet(): React.ReactNode {
   return (
@@ -30,12 +29,6 @@ export function ImportWallet(): React.ReactNode {
           <AccordionTrigger>Private Key</AccordionTrigger>
           <AccordionContent className="pt-4">
             <PrivateKey />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="hardware-wallet">
-          <AccordionTrigger>Hardware Wallet (Ledger)</AccordionTrigger>
-          <AccordionContent className="pt-4">
-            <HardwareWallet />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

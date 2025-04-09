@@ -1,33 +1,18 @@
 import { Link } from "wouter";
 import { useState } from "react";
-import { navigate } from "wouter/use-browser-location";
 
 import { Title } from "@/components/title";
 import { Alert } from "@/components/alert";
 import { Button } from "@/components/button";
 import { Container } from "@/components/container";
-import { useAccount } from "@/context/account-context";
-import { KeyManager } from "@pokt-foundation/pocketjs-signer";
 import { PasswordInput } from "@/components/password-input";
+import { useCreateWallet } from "@/wallet";
 
 export function CreateWallet(): JSX.Element {
-  const { setAccount, setPortablePrivateKey } = useAccount();
+  const createWallet = useCreateWallet();
 
   const [password, setPassword] = useState("");
-  const [creatingWallet, setCreatingWallet] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  async function createWallet(): Promise<void> {
-    setCreatingWallet(true);
-
-    const account = await KeyManager.createRandom();
-    const portablePrivateKey = await account.exportPPK({ password });
-    setAccount(account);
-    setPortablePrivateKey(portablePrivateKey);
-
-    setCreatingWallet(false);
-    navigate("/download-wallet");
-  }
 
   return (
     <Container>
@@ -57,8 +42,12 @@ export function CreateWallet(): JSX.Element {
         Please back it up securely. It can not be recovered if you lose it.
       </Alert>
 
-      <Button className="w-full" onClick={createWallet} disabled={creatingWallet}>
-        {creatingWallet ? "Creating wallet" : "Create wallet"}
+      <Button
+        className="w-full"
+        disabled={createWallet.isPending}
+        onClick={() => createWallet.mutate({ password })}
+      >
+        {createWallet.isPending ? "Creating wallet" : "Create wallet"}
       </Button>
 
       <p className="text-center">

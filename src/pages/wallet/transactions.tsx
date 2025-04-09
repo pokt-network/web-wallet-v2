@@ -1,9 +1,10 @@
-import { usePrice } from "@/use-price";
+// import { usePrice } from "@/use-price";
 import { Button } from "@/components/button";
 import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
-import { TransactionType, useTransactions } from "./use-transactions";
+import { useTransactions } from "./use-transactions";
 import { ArrowDownToLine, ArrowUpRight, Loader2 } from "lucide-react";
+import { TypedTransaction } from "@/rpc";
 
 export function Transactions(): React.ReactNode {
   const { data: transactions, error, isLoading, refetch } = useTransactions();
@@ -46,18 +47,8 @@ export function Transactions(): React.ReactNode {
   return (
     <div className="flex flex-col overflow-hidden text-black border rounded-lg bg-pocket-gray/3 border-pocket-gray/10">
       {transactions.map((transaction, index) => {
-        if (transaction.stdTx.msg.type !== "pos/Send") {
-          return null;
-        }
-
         return (
-          <Transaction
-            key={transaction.hash}
-            type={transaction.type}
-            amount={transaction.stdTx.msg.value.amount}
-            from={transaction.stdTx.msg.value.from_address}
-            border={index !== 0}
-          />
+          <Transaction key={transaction.hash} transaction={transaction} border={index !== 0} />
         );
       })}
     </div>
@@ -65,17 +56,13 @@ export function Transactions(): React.ReactNode {
 }
 
 function Transaction({
-  type,
-  amount,
-  from,
+  transaction,
   border,
 }: {
-  type: TransactionType;
-  amount: bigint;
-  from: string;
+  transaction: TypedTransaction;
   border: boolean;
 }): React.ReactNode {
-  const { price, isLoading } = usePrice({ uPOKT: amount });
+  // const { price, isLoading } = usePrice({ uPOKT: amount });
 
   return (
     <div
@@ -84,28 +71,33 @@ function Transaction({
       }`}
     >
       <div className="flex items-center gap-4">
-        {type === "received" ? (
+        {transaction.type === "recv" ? (
           <ArrowDownToLine className="size-6" />
         ) : (
           <ArrowUpRight className="size-6" />
         )}
 
         <div>
-          <p className="text-xs font-medium capitalize">{type}</p>
+          <p className="text-xs font-medium capitalize">{transaction.type}</p>
           <p className="text-xs truncate max-w-32 text-pocket-gray">
-            From: {<span className="hover:text-pocket-blue">{formatAddress(from)}</span>}
+            From:{" "}
+            {
+              <span className="hover:text-pocket-blue">
+                {formatAddress(transaction.fromAddress)}
+              </span>
+            }
           </p>
         </div>
       </div>
 
       <div>
         <p className="text-xs font-medium">
-          {type === "received" ? "" : "-"}
-          {formatPOKT(amount)} POKT
+          {transaction.type === "recv" ? "" : "-"}
+          {formatPOKT(transaction.amount)} POKT
         </p>
-        <p className="text-xs text-right text-pocket-gray">
+        {/* <p className="text-xs text-right text-pocket-gray">
           {isLoading || price === undefined ? "Loading..." : `$${price} USD`}
-        </p>
+        </p> */}
       </div>
     </div>
   );

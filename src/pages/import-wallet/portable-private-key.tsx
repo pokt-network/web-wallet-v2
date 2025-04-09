@@ -5,31 +5,7 @@ import { FileKey2, Loader2, Upload, XIcon } from "lucide-react";
 import { cx } from "@/cx";
 import { Button } from "@/components/button";
 import { PasswordInput } from "@/components/password-input";
-import { navigate } from "wouter/use-browser-location";
-import { KeyManager } from "@pokt-foundation/pocketjs-signer";
-import { useAccount } from "@/context/account-context";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
-
-function useImportWallet(): UseMutationResult<
-  KeyManager,
-  Error,
-  {
-    ppk: string;
-    password: string;
-  }
-> {
-  const { setAccount } = useAccount();
-
-  return useMutation({
-    mutationFn: async ({ ppk, password }: { ppk: string; password: string }) => {
-      return KeyManager.fromPPK({ ppk, password });
-    },
-    onSuccess: (account) => {
-      setAccount(account);
-      navigate("/wallet");
-    },
-  });
-}
+import { useImportWallet } from "@/wallet";
 
 export function PortablePrivateKey(): React.ReactNode {
   const importWallet = useImportWallet();
@@ -65,8 +41,8 @@ export function PortablePrivateKey(): React.ReactNode {
         onClick={async () => {
           if (!file) return;
 
-          const ppk = await file.text();
-          importWallet.mutate({ ppk, password });
+          const serialization = await file.text();
+          importWallet.mutate({ serialization, password });
         }}
       >
         {importWallet.isPending ? <Loader2 className="size-6 animate-spin" /> : "Import Wallet"}
