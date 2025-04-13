@@ -11,8 +11,8 @@ import { Send } from "./send";
 export function Wallet(): React.ReactNode {
   return (
     <Container>
-      <Balanace />
       <Address />
+      <Balanace />
       <Send />
       <Transactions />
 

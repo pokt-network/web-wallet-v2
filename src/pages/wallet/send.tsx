@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { env } from "@/env";
 
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningStargateClient, coins, DeliverTxResponse } from "@cosmjs/stargate";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useWalletStore } from "@/wallet";
@@ -21,6 +22,7 @@ import { useWalletStore } from "@/wallet";
 const sendSchema = z.object({
   address: z.string().min(1, "Address is required"),
   amount: z.number().positive().int().min(1, "Amount must be greater than 0"),
+  password: z.string(),
   memo: z.string().optional(),
 });
 
@@ -38,6 +40,7 @@ export function Send(): ReactNode {
       address: "",
       amount: 0,
       memo: "",
+      password: "",
     },
   });
 
@@ -66,6 +69,7 @@ export function Send(): ReactNode {
               amount: data.amount,
               toAddress: data.address,
               memo: data.memo,
+              password: data.password,
             });
           }}
         >
@@ -101,6 +105,24 @@ export function Send(): ReactNode {
             />
             {form.formState.errors.amount && (
               <ErrorMessage>{form.formState.errors.amount.message}</ErrorMessage>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="block">
+              <span className="text-sm font-medium text-pocket-gray">Password</span>
+              <p className="text-xs text-pocket-gray">
+                The password you set when creating the wallet.
+              </p>
+            </label>
+            <Input
+              type="password"
+              placeholder="Enter the password"
+              {...form.register("password")}
+              className={form.formState.errors.password ? "border-red-500" : ""}
+            />
+            {form.formState.errors.password && (
+              <ErrorMessage>{form.formState.errors.password.message}</ErrorMessage>
             )}
           </div>
 
@@ -148,6 +170,7 @@ export function useSendTransaction(): UseMutationResult<DeliverTxResponse, Error
     onError: (error) => {
       console.error("Transaction failed:", error);
     },
+    retry: false,
   });
 }
 
@@ -155,24 +178,22 @@ type SendTransaction = {
   amount: number;
   toAddress: string;
   memo?: string;
+  password: string;
 };
 
 async function sendTransaction({
   amount,
   toAddress,
   memo,
+  password,
 }: SendTransaction): Promise<DeliverTxResponse> {
-  const wallet = useWalletStore.getState().wallet;
+  const walletState = useWalletStore.getState();
 
-  if (!wallet) {
+  if (walletState === null) {
     throw new Error("No wallet found");
   }
 
-  const [account] = await wallet.getAccounts();
-
-  if (!account) {
-    throw new Error("No account found");
-  }
+  const wallet = await DirectSecp256k1HdWallet.deserialize(walletState.serializedWallet, password);
 
   const client = await SigningStargateClient.connectWithSigner(env.RPC_URL, wallet);
 
@@ -184,13 +205,13 @@ async function sendTransaction({
   const sendMessage = {
     typeUrl: "/cosmos.bank.v1beta1.MsgSend",
     value: {
-      fromAddress: account.address,
+      fromAddress: walletState.address,
       toAddress,
       amount: coins(amount * 1_000_000, "upokt"),
     },
   };
 
-  const result = await client.signAndBroadcast(account.address, [sendMessage], fee, memo);
+  const result = await client.signAndBroadcast(walletState.address, [sendMessage], fee, memo);
 
   if (result.code === 0) {
     return result;

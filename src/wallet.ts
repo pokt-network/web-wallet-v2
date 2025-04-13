@@ -1,46 +1,57 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { navigate } from "wouter/use-browser-location";
-import { AccountData, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { useMutation, UseMutationResult, useQuery, UseQueryResult } from "@tanstack/react-query";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
 
-type Wallet = {
-  wallet: DirectSecp256k1HdWallet | null;
-  serializedWallet: string | null;
-};
+type WalletState = {
+  address: string;
+  serializedWallet: string;
+} | null;
 
-export const useWalletStore = create<Wallet>()(() => ({
-  wallet: null,
-  serializedWallet: null,
-}));
+export const useWalletStore = create<WalletState>()(
+  persist<WalletState>(() => null, {
+    name: "wallet-storage",
+    storage: createJSONStorage(() => localStorage),
+  })
+);
 
 type SerializedWallet = {
   serialization: string;
   password: string;
 };
 
-export function useImportWallet(): UseMutationResult<
-  DirectSecp256k1HdWallet,
-  Error,
-  SerializedWallet
-> {
+export function useImportWallet(): UseMutationResult<void, Error, SerializedWallet> {
   return useMutation({
     mutationFn: async ({ serialization, password }) => {
-      return await DirectSecp256k1HdWallet.deserialize(serialization, password);
+      const wallet = await DirectSecp256k1HdWallet.deserialize(serialization, password);
+
+      const address = await getAddress(wallet);
+      const serializedWallet = await wallet.serialize(password);
+
+      useWalletStore.setState({
+        address,
+        serializedWallet,
+      });
     },
-    onSuccess: (wallet) => {
-      useWalletStore.setState({ wallet });
+    onSuccess: () => {
       navigate("/wallet");
     },
   });
 }
 
-export function useCreateWallet(): UseMutationResult<Wallet, Error, { password: string }> {
+export function useCreateWallet(): UseMutationResult<void, Error, { password: string }> {
   return useMutation({
     mutationFn: async ({ password }) => {
       const wallet = await DirectSecp256k1HdWallet.generate(24, { prefix: "pokt" });
+
+      const address = await getAddress(wallet);
       const serializedWallet = await wallet.serialize(password);
-      useWalletStore.setState({ wallet, serializedWallet });
-      return { wallet, serializedWallet };
+
+      useWalletStore.setState({
+        address,
+        serializedWallet,
+      });
     },
     onSuccess: () => {
       navigate("/download-wallet");
@@ -48,23 +59,12 @@ export function useCreateWallet(): UseMutationResult<Wallet, Error, { password: 
   });
 }
 
-export function useAccount(): UseQueryResult<AccountData, Error> {
-  return useQuery({
-    queryKey: ["account"],
-    queryFn: async () => {
-      const { wallet } = useWalletStore.getState();
+async function getAddress(wallet: DirectSecp256k1HdWallet): Promise<string> {
+  const [account] = await wallet.getAccounts();
 
-      if (wallet === null) {
-        throw new Error("No wallet");
-      }
+  if (account === undefined) {
+    throw new Error("No accounts");
+  }
 
-      const [account] = await wallet.getAccounts();
-
-      if (account === undefined) {
-        throw new Error("No accounts");
-      }
-
-      return account;
-    },
-  });
+  return account.address;
 }

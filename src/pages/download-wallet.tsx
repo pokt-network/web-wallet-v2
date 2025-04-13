@@ -21,13 +21,15 @@ import { useWalletStore } from "@/wallet";
 import { downloadFile } from "@/utils/download-file";
 
 export function DownloadWallet(): React.ReactNode {
-  const serializedWallet = useWalletStore((state) => state.serializedWallet);
+  const state = useWalletStore();
   const [keyFileDownloaded, setKeyFileDownloaded] = useState(false);
 
-  if (serializedWallet === null) {
+  if (state === null) {
     navigate("/create-wallet");
     return null;
   }
+
+  const { serializedWallet } = state;
 
   async function handleDownload(): Promise<void> {
     if (!serializedWallet) {
