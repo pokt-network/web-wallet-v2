@@ -7,7 +7,13 @@ export function Header(): JSX.Element {
       <Link href="/">
         <img src="/images/logo.svg" alt="logo" className="w-36" />
       </Link>
-      <Button variant="outline">Buy POKT</Button>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://www.coingecko.com/en/coins/pocket-network#markets"
+      >
+        <Button variant="outline">Buy POKT</Button>
+      </a>
     </div>
   );
 }
