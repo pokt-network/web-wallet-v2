@@ -12,23 +12,23 @@ export function Footer(): JSX.Element {
           </div>
           <div className="flex gap-6 items-center mt-6">
             <a href="http://bit.ly/PocketDiscordInvite" target="_blank" rel="noopener noreferrer">
-              <img src="images/social/discord.svg" alt="Discord logo" className="w-6 h-6" />
+              <img src="images/social/discord.svg" alt="Discord logo" className="size-6" />
             </a>
             <a href="https://github.com/pokt-network" target="_blank" rel="noopener noreferrer">
-              <img src="images/social/github.svg" alt="GitHub logo" className="w-6 h-6" />
+              <img src="images/social/github.svg" alt="GitHub logo" className="size-6" />
             </a>
             <a href="https://t.me/POKTnetwork" target="_blank" rel="noopener noreferrer">
-              <img src="images/social/telegram.svg" alt="Telegram logo" className="w-6 h-6" />
+              <img src="images/social/telegram.svg" alt="Telegram logo" className="size-6" />
             </a>
             <a href="https://twitter.com/POKTnetwork" target="_blank" rel="noopener noreferrer">
-              <img src="images/social/x.svg" alt="X logo" className="w-6 h-6" />
+              <img src="images/social/x.svg" alt="X logo" className="size-6" />
             </a>
             <a
               href="https://www.linkedin.com/company/pocket-network-foundation/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="images/social/linkedin.svg" alt="LinkedIn logo" className="w-6 h-6" />
+              <img src="images/social/linkedin.svg" alt="LinkedIn logo" className="size-6" />
             </a>
           </div>
         </div>
