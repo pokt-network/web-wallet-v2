@@ -15,7 +15,6 @@ export function Balanace(): React.ReactNode {
         ) : (
           <div className="flex items-center justify-center gap-2 font-bold text-center">
             <div className="text-5xl">{formatPOKT(balance)}</div>
-            <div className="font-mono text-2xl">POKT</div>
           </div>
         )}
       </div>

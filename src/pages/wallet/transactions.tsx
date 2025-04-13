@@ -93,7 +93,7 @@ function Transaction({
       <div>
         <p className="text-xs font-medium">
           {transaction.type === "recv" ? "" : "-"}
-          {formatPOKT(transaction.amount)} POKT
+          {formatPOKT(transaction.amount)}
         </p>
         {/* <p className="text-xs text-right text-pocket-gray">
           {isLoading || price === undefined ? "Loading..." : `$${price} USD`}
