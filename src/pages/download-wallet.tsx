@@ -56,7 +56,7 @@ export function DownloadWallet(): React.ReactNode {
 
       <p className="text-left">
         If you lose the key file or password, your only other method of accessing the wallet will be
-        to use the private key. Be sure to Reveal Private Key on the next page and save it securely.
+        to use the private key.
       </p>
 
       <Alert>

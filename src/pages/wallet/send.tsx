@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/dialog";
-import { FC, ReactNode } from "react";
+import { ReactNode } from "react";
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
@@ -18,6 +18,7 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { SigningStargateClient, coins, DeliverTxResponse } from "@cosmjs/stargate";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useWalletStore } from "@/wallet";
+import { ErrorMessage } from "@/components/error-message";
 
 const sendSchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -27,10 +28,6 @@ const sendSchema = z.object({
 });
 
 type SendForm = z.infer<typeof sendSchema>;
-
-const ErrorMessage: FC<{ children: ReactNode }> = ({ children }) => (
-  <p className="text-xs text-red-500">{children}</p>
-);
 
 export function Send(): ReactNode {
   const form = useForm<SendForm>({
