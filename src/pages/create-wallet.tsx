@@ -91,7 +91,7 @@ export function CreateWallet(): JSX.Element {
 
         <p className="text-center">
           Already have a wallet?{" "}
-          <Link to="/import" className="text-pocket-blue underline">
+          <Link to="/import-wallet" className="text-pocket-blue underline">
             Import Wallet
           </Link>
         </p>
