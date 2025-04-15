@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { Routes } from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "./components/toast";
 
 const root = document.getElementById("root");
 
@@ -16,6 +17,7 @@ createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Routes />
+      <Toaster />
     </QueryClientProvider>
   </StrictMode>
 );

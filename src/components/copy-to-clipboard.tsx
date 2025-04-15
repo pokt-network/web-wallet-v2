@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckIcon, Copy } from "lucide-react";
 import { Tooltip } from "@/components/tooltip";
+import { toast } from "sonner";
 
 export function CopyToClipboard({ value }: { value: string }): React.ReactNode {
   const [isCopied, setIsCopied] = useState(false);
@@ -9,6 +10,7 @@ export function CopyToClipboard({ value }: { value: string }): React.ReactNode {
     try {
       await navigator.clipboard.writeText(value);
       setIsCopied(true);
+      toast.success("Copied to clipboard");
     } catch (error) {
       console.error("Failed to copy to clipboard", error);
     }

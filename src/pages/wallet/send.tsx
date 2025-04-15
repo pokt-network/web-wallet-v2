@@ -19,6 +19,7 @@ import { SigningStargateClient, coins, DeliverTxResponse } from "@cosmjs/stargat
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useWalletStore } from "@/wallet";
 import { ErrorMessage } from "@/components/error-message";
+import { toast } from "sonner";
 
 const sendSchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -171,6 +172,7 @@ export function useSendTransaction(): UseMutationResult<DeliverTxResponse, Error
       console.log("Transaction sent successfully");
     },
     onError: (error) => {
+      toast.error("Transaction failed: " + error.message);
       console.error("Transaction failed:", error);
     },
     retry: false,
