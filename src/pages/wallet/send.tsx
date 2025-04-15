@@ -56,6 +56,12 @@ export function Send(): ReactNode {
           <DialogTitle>Send</DialogTitle>
         </DialogHeader>
 
+        {send.error && (
+          <div className="bg-red-50 p-4 rounded text-xs text-red-500 break-all">
+            {send.error.message}
+          </div>
+        )}
+
         <form
           className="flex flex-col gap-4"
           onSubmit={async (e) => {
