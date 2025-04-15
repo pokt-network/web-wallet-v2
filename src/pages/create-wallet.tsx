@@ -61,14 +61,28 @@ export function CreateWallet(): JSX.Element {
         <p>Create a passphrase to protect your wallet.</p>
 
         <div className="flex flex-col gap-2">
-          <PasswordInput placeholder="Password" {...form.register("password")} />
+          <PasswordInput
+            placeholder="Password"
+            {...form.register("password", {
+              onChange: () => {
+                if (form.formState.dirtyFields.confirmPassword) {
+                  form.trigger();
+                }
+              },
+            })}
+          />
           {form.formState.errors.password && (
             <ErrorMessage>{form.formState.errors.password.message}</ErrorMessage>
           )}
         </div>
 
         <div className="flex flex-col gap-2">
-          <PasswordInput placeholder="Confirm password" {...form.register("confirmPassword")} />
+          <PasswordInput
+            placeholder="Confirm password"
+            {...form.register("confirmPassword", {
+              onChange: () => form.trigger(),
+            })}
+          />
           {form.formState.errors.confirmPassword && (
             <ErrorMessage>{form.formState.errors.confirmPassword.message}</ErrorMessage>
           )}
