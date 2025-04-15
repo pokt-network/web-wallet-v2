@@ -186,7 +186,7 @@ async function sendTransaction({
 }: SendTransaction): Promise<DeliverTxResponse> {
   const walletState = useWalletStore.getState();
 
-  if (walletState === null) {
+  if (walletState.serializedWallet === null) {
     throw new Error("No wallet found");
   }
 

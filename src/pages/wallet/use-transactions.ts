@@ -6,11 +6,12 @@ export function useTransactions(): UseQueryResult<RPC.TypedTransaction[], Error>
   const data = useWalletStore();
 
   return useQuery({
-    queryKey: data ? ["transactions", data.address] : ["transactions"],
+    queryKey: data.address ? ["transactions", data.address] : ["transactions"],
     queryFn: async () => {
-      if (!data) {
+      if (!data.address) {
         return [];
       }
+
       return await RPC.getTransactions(data.address);
     },
   });

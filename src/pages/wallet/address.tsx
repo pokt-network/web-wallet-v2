@@ -6,7 +6,7 @@ import { navigate } from "wouter/use-browser-location";
 export function Address(): React.ReactNode {
   const state = useWalletStore();
 
-  if (state === null) {
+  if (state.address === null) {
     navigate("/");
     return null;
   }

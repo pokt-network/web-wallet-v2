@@ -9,7 +9,11 @@ export const Logout: FC = () => (
     variant="outline"
     className="gap-2"
     onClick={() => {
-      useWalletStore.setState(null);
+      useWalletStore.setState({
+        address: null,
+        serializedWallet: null,
+      });
+
       navigate("/");
     }}
   >

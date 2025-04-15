@@ -6,8 +6,17 @@ import { Address } from "./address";
 import { Balanace } from "./balance";
 import { Send } from "./send";
 import { Logout } from "./logout-button";
+import { useWalletStore } from "@/wallet";
+import { navigate } from "wouter/use-browser-location";
 
 export function Wallet(): React.ReactNode {
+  const data = useWalletStore();
+
+  if (data.address === null) {
+    navigate("/create-wallet");
+    return null;
+  }
+
   return (
     <Container>
       <Address />

@@ -6,9 +6,9 @@ export function useBalance(): UseQueryResult<bigint, Error> {
   const data = useWalletStore();
 
   return useQuery({
-    queryKey: data ? ["balance", data.address] : ["balance"],
+    queryKey: data.address ? ["balance", data.address] : ["balance"],
     queryFn: async () => {
-      if (!data) {
+      if (!data.address) {
         return null;
       }
 

@@ -4,16 +4,27 @@ import { navigate } from "wouter/use-browser-location";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 
-type WalletState = {
-  address: string;
-  serializedWallet: string;
-} | null;
+type WalletState =
+  | {
+      address: string;
+      serializedWallet: string;
+    }
+  | {
+      address: null;
+      serializedWallet: null;
+    };
 
 export const useWalletStore = create<WalletState>()(
-  persist<WalletState>(() => null, {
-    name: "wallet-storage",
-    storage: createJSONStorage(() => localStorage),
-  })
+  persist<WalletState>(
+    () => ({
+      address: null,
+      serializedWallet: null,
+    }),
+    {
+      name: "wallet-storage",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 );
 
 type SerializedWallet = {
