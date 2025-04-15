@@ -45,12 +45,12 @@ export function Transactions(): React.ReactNode {
   }
 
   return (
-    <div className="flex flex-col overflow-hidden text-black border rounded-lg bg-pocket-gray/3 border-pocket-gray/10">
-      {transactions.map((transaction, index) => {
-        return (
+    <div className="flex flex-col overflow-hidden text-black border rounded-lg bg-pocket-gray/3 border-pocket-gray/10 ">
+      <div className="overflow-y-auto max-h-[400px]">
+        {transactions.map((transaction, index) => (
           <Transaction key={transaction.hash} transaction={transaction} border={index !== 0} />
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 }
