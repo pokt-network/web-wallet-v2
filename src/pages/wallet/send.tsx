@@ -32,7 +32,6 @@ type SendForm = z.infer<typeof sendSchema>;
 
 export function Send(): ReactNode {
   const form = useForm<SendForm>({
-    mode: "all",
     resolver: zodResolver(sendSchema),
     defaultValues: {
       address: "",
@@ -65,8 +64,9 @@ export function Send(): ReactNode {
 
         <form
           className="flex flex-col gap-4"
-          onSubmit={async (e) => {
-            e.preventDefault();
+          onSubmit={async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             const data = form.getValues();
 
             send.mutate({
