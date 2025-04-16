@@ -51,7 +51,7 @@ export function DownloadWallet(): React.ReactNode {
         onClick={handleDownload}
       >
         keyfile.json
-        <FileDown className="w-6 h-6" />
+        <FileDown className="size-6" />
       </div>
 
       <p className="text-left">
@@ -72,7 +72,7 @@ export function DownloadWallet(): React.ReactNode {
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="ghost" className="flex items-center gap-2">
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="size-5" />
             Back
           </Button>
         </AlertDialogTrigger>
