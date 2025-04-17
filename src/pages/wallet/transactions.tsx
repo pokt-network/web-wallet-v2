@@ -199,7 +199,7 @@ const ProgressBar: FC<{
     <div className="flex items-center gap-2">
       <div className="relative w-32 h-2 overflow-hidden rounded bg-pocket-gray/10">
         <div
-          className="absolute top-0 left-0 h-full bg-green-500 "
+          className="absolute top-0 left-0 h-full bg-green-500"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
