@@ -22,6 +22,7 @@ import {
 import { FC, ReactNode } from "react";
 import { useBlock } from "@/hooks/use-block";
 import { CopyToClipboard } from "@/components/copy-to-clipboard";
+import { secondsToTimeString } from "@/utils/seconds-to-time-string";
 
 export function Transactions(): React.ReactNode {
   const { data: transactions, error, isLoading, refetch } = useTransactions();
@@ -163,14 +164,22 @@ function Transaction({
               <Row
                 label="Time:"
                 value={
-                  new Date(block.header.time).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  }) + ` (${block.header.time.toLocaleString()})`
+                  <div className="flex items-center gap-2">
+                    {secondsToTimeString(
+                      (Date.now() - new Date(block.header.time).getTime()) / 1000
+                    )}
+                    {" ago"}
+                    <div>
+                      {`(${new Date(block.header.time).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })})`}
+                    </div>
+                  </div>
                 }
               />
             )}
