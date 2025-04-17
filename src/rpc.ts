@@ -3,7 +3,7 @@ import { IndexedTx, StargateClient } from "@cosmjs/stargate";
 import { Tx } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx.js";
 
-const client = await StargateClient.connect(env.RPC_URL);
+export const client = await StargateClient.connect(env.RPC_URL);
 
 /**
  * Fetches the balance of the provided address.

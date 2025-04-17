@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/dialog";
 import { FC, ReactNode } from "react";
+import { useBlock } from "@/hooks/use-block";
 
 export function Transactions(): React.ReactNode {
   const { data: transactions, error, isLoading, refetch } = useTransactions();
@@ -70,6 +71,8 @@ function Transaction({
   transaction: TypedTransaction;
   border: boolean;
 }): React.ReactNode {
+  const { data: block } = useBlock({ height: transaction.height });
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -131,9 +134,25 @@ function Transaction({
                 </div>
               }
             />
+            <Row label="Height:" value={transaction.height.toLocaleString()} />
+            {block && (
+              <Row
+                label="Time:"
+                value={
+                  new Date(block.header.time).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  }) + ` (${block.header.time.toLocaleString()})`
+                }
+              />
+            )}
+
             <Row label="Tx hash:" value={transaction.hash} />
             <Row label="Tx index:" value={transaction.txIndex.toString()} />
-            <Row label="Height:" value={transaction.height.toLocaleString()} />
 
             <Row
               label="Gas:"
