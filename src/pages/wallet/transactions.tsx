@@ -113,7 +113,7 @@ function Transaction({
         </DialogHeader>
 
         <div className="break-all">
-          <div className="flex items-center justify-start md:gap-2 gap-4 flex-col">
+          <div className="flex flex-col items-center justify-start gap-4 md:gap-2">
             <Row label="From:" value={transaction.fromAddress} />
             <Row label="To:" value={transaction.toAddress} />
             <Row
@@ -121,12 +121,12 @@ function Transaction({
               value={
                 <div className="flex items-center">
                   {transaction.code === 0 ? (
-                    <div className="text-green-500 bg-green-500/10 border border-green-500/50 rounded-lg px-2 py-1 text-xs font-medium w-auto font-sans flex items-center gap-2">
+                    <div className="flex items-center w-auto gap-2 px-2 py-1 font-sans text-xs font-medium text-green-500 border rounded-lg bg-green-500/10 border-green-500/50">
                       <CircleCheck className="size-4" />
                       Success
                     </div>
                   ) : (
-                    <div className="text-red-500 bg-red-500/10 border border-red-500/50 rounded-lg px-2 py-1 text-xs font-medium w-auto font-sans flex items-center gap-2">
+                    <div className="flex items-center w-auto gap-2 px-2 py-1 font-sans text-xs font-medium text-red-500 border rounded-lg bg-red-500/10 border-red-500/50">
                       <XCircle className="size-4" />
                       Failed
                     </div>
@@ -169,8 +169,8 @@ function Transaction({
 
           <div className="mt-4">
             <b>Events</b>
-            <div className=" rounded overflow-hidden border border-pocket-gray/10 bg-pocket-gray/5">
-              <div className="font-mono max-w-full w-full h-64 p-2 text-xs overflow-auto whitespace-break-spaces ">
+            <div className="overflow-hidden border rounded border-pocket-gray/10 bg-pocket-gray/5">
+              <div className="w-full h-64 max-w-full p-2 overflow-auto font-mono text-xs whitespace-break-spaces ">
                 {JSON.stringify(transaction.events, null, 2)}
               </div>
             </div>
@@ -185,9 +185,9 @@ const Row: FC<{
   label: ReactNode;
   value: ReactNode;
 }> = ({ label, value }) => (
-  <div className="flex items-center justify-start md:gap-2 w-full text-sm md:flex-row flex-col">
-    <div className="w-full md:w-64 font-medium opacity-80">{label}</div>
-    <div className="break-all w-full">{value}</div>
+  <div className="flex flex-col items-center justify-start w-full text-sm md:gap-2 md:flex-row">
+    <div className="w-full font-medium md:w-64 opacity-80">{label}</div>
+    <div className="w-full break-all">{value}</div>
   </div>
 );
 
@@ -197,7 +197,7 @@ const ProgressBar: FC<{
   const progressPercentage = Math.min(Math.max(progress, 0), 100);
   return (
     <div className="flex items-center gap-2">
-      <div className="relative w-32 h-2 bg-pocket-gray/10 rounded overflow-hidden">
+      <div className="relative w-32 h-2 overflow-hidden rounded bg-pocket-gray/10">
         <div
           className="absolute top-0 left-0 h-full bg-green-500 "
           style={{ width: `${progressPercentage}%` }}
