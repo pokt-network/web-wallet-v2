@@ -3,7 +3,14 @@ import { Button } from "@/components/button";
 import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
 import { useTransactions } from "./use-transactions";
-import { ArrowDownToLine, ArrowUpRight, CircleCheck, Loader2, XCircle } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpRight,
+  CircleCheck,
+  ExternalLink,
+  Loader2,
+  XCircle,
+} from "lucide-react";
 import { TypedTransaction } from "@/rpc";
 import {
   Dialog,
@@ -14,6 +21,7 @@ import {
 } from "@/components/dialog";
 import { FC, ReactNode } from "react";
 import { useBlock } from "@/hooks/use-block";
+import { CopyToClipboard } from "@/components/copy-to-clipboard";
 
 export function Transactions(): React.ReactNode {
   const { data: transactions, error, isLoading, refetch } = useTransactions();
@@ -114,14 +122,30 @@ function Transaction({
 
         <div className="break-all">
           <div className="flex flex-col items-center justify-start gap-4 md:gap-2">
-            <Row label="From:" value={transaction.fromAddress} />
-            <Row label="To:" value={transaction.toAddress} />
+            <Row
+              label="From:"
+              value={
+                <div className="flex items-center gap-2 font-mono">
+                  {transaction.fromAddress}
+                  <CopyToClipboard value={transaction.fromAddress} />
+                </div>
+              }
+            />
+            <Row
+              label="To:"
+              value={
+                <div className="flex items-center gap-2 font-mono">
+                  {transaction.toAddress}
+                  <CopyToClipboard value={transaction.toAddress} />
+                </div>
+              }
+            />
             <Row
               label="Status:"
               value={
                 <div className="flex items-center">
                   {transaction.code === 0 ? (
-                    <div className="flex items-center w-auto gap-2 px-2 py-1 font-sans text-xs font-medium text-green-500 border rounded-lg bg-green-500/10 border-green-500/50">
+                    <div className="flex items-center w-auto gap-2 px-2 py-1 font-sans text-xs font-medium text-pocket-blue border rounded-lg bg-pocket-blue/10 border-pocket-blue/50">
                       <CircleCheck className="size-4" />
                       Success
                     </div>
@@ -151,7 +175,15 @@ function Transaction({
               />
             )}
 
-            <Row label="Tx hash:" value={transaction.hash} />
+            <Row
+              label="Tx hash:"
+              value={
+                <div className="flex items-center gap-2 font-mono">
+                  {transaction.hash}
+                  <CopyToClipboard value={transaction.hash} />
+                </div>
+              }
+            />
             <Row label="Tx index:" value={transaction.txIndex.toString()} />
 
             <Row
@@ -174,6 +206,18 @@ function Transaction({
                 {JSON.stringify(transaction.events, null, 2)}
               </div>
             </div>
+          </div>
+
+          <div className="flex items-center justify-end w-full mt-6">
+            <a
+              href={`https://shannon.beta.testnet.pokt.network/pocket-beta/tx/${transaction.hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 text-pocket-blue underline"
+            >
+              View in explorer
+              <ExternalLink className="size-4" />
+            </a>
           </div>
         </div>
       </DialogContent>
@@ -199,11 +243,11 @@ const ProgressBar: FC<{
     <div className="flex items-center gap-2">
       <div className="relative w-32 h-2 overflow-hidden rounded bg-pocket-gray/10">
         <div
-          className="absolute top-0 left-0 h-full bg-green-500"
+          className="absolute top-0 left-0 h-full bg-pocket-blue"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
-      <div className="text-xs font-medium text-green-500">{progressPercentage.toFixed(2)}%</div>
+      <div className="text-xs font-medium text-pocket-blue">{progressPercentage.toFixed(2)}%</div>
     </div>
   );
 };
