@@ -107,13 +107,13 @@ function Transaction({
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl max-h-[100dvh] overflow-auto">
         <DialogHeader>
           <DialogTitle>Transaction details</DialogTitle>
         </DialogHeader>
 
         <div className="break-all">
-          <div className="flex items-center justify-start gap-2 flex-col">
+          <div className="flex items-center justify-start md:gap-2 gap-4 flex-col">
             <Row label="From:" value={transaction.fromAddress} />
             <Row label="To:" value={transaction.toAddress} />
             <Row
@@ -156,7 +156,14 @@ function Transaction({
 
             <Row
               label="Gas:"
-              value={`${transaction.gasUsed.toLocaleString()} / ${transaction.gasWanted.toLocaleString()}`}
+              value={
+                <div className="flex items-center gap-2">
+                  {`${transaction.gasUsed.toLocaleString()} / ${transaction.gasWanted.toLocaleString()}`}
+                  <ProgressBar
+                    progress={(Number(transaction.gasUsed) / Number(transaction.gasWanted)) * 100}
+                  />
+                </div>
+              }
             />
           </div>
 
@@ -178,8 +185,25 @@ const Row: FC<{
   label: ReactNode;
   value: ReactNode;
 }> = ({ label, value }) => (
-  <div className="flex items-center justify-start gap-2 w-full text-sm">
-    <div className="w-64 font-medium opacity-80">{label}</div>
+  <div className="flex items-center justify-start md:gap-2 w-full text-sm md:flex-row flex-col">
+    <div className="w-full md:w-64 font-medium opacity-80">{label}</div>
     <div className="break-all w-full">{value}</div>
   </div>
 );
+
+const ProgressBar: FC<{
+  progress: number;
+}> = ({ progress }) => {
+  const progressPercentage = Math.min(Math.max(progress, 0), 100);
+  return (
+    <div className="flex items-center gap-2">
+      <div className="relative w-32 h-2 bg-pocket-gray/10 rounded overflow-hidden">
+        <div
+          className="absolute top-0 left-0 h-full bg-green-500 "
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+      <div className="text-xs font-medium text-green-500">{progressPercentage.toFixed(2)}%</div>
+    </div>
+  );
+};
