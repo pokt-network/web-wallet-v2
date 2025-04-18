@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/dialog";
-import { ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { ArrowUpRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
@@ -67,14 +67,6 @@ export function Send(): ReactNode {
           onSubmit={async (event) => {
             event.preventDefault();
             event.stopPropagation();
-            const data = form.getValues();
-
-            send.mutate({
-              amount: data.amount,
-              toAddress: data.address,
-              memo: data.memo,
-              password: data.password,
-            });
           }}
         >
           <div className="flex flex-col gap-2">
@@ -145,25 +137,101 @@ export function Send(): ReactNode {
             )}
           </div>
 
-          <Button
-            className="w-full gap-2"
-            type="submit"
-            disabled={!form.formState.isValid || send.isPending}
-          >
-            {send.isPending ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <>
-                Send
-                <ArrowUpRight className="w-4 h-4" />
-              </>
-            )}
-          </Button>
+          <ConfirmSendButton
+            isValid={form.formState.isValid}
+            isPending={send.isPending}
+            address={form.watch("address")}
+            amount={form.watch("amount")}
+            memo={form.watch("memo")}
+            onClick={async () => {
+              const formIsValid = await form.trigger();
+
+              if (send.isPending) {
+                toast.error("Transaction is already pending");
+                return;
+              }
+
+              if (!formIsValid) {
+                toast.error("Please fill in all required fields");
+                return;
+              }
+
+              const data = form.getValues();
+
+              send.mutate({
+                amount: data.amount,
+                toAddress: data.address,
+                memo: data.memo,
+                password: data.password,
+              });
+            }}
+          />
         </form>
       </DialogContent>
     </Dialog>
   );
 }
+
+const ConfirmSendButton: FC<{
+  isValid: boolean;
+  isPending: boolean;
+  address: string;
+  amount: number;
+  memo?: string;
+  onClick: () => void;
+}> = ({ isPending, isValid, address, amount, memo, onClick }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button type="submit" className="w-full gap-2" disabled={!isValid || isPending}>
+          {isPending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <>
+              Send
+              <ArrowUpRight className="w-4 h-4" />
+            </>
+          )}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="md:w-sm">
+        <DialogHeader>
+          <DialogTitle>Confirm Transaction</DialogTitle>
+        </DialogHeader>
+
+        <div className="text-sm w-full">
+          <p className="text-pocket-gray">
+            You are about to send <span className="font-bold">{amount} POKT</span> to:
+          </p>
+          <div className="flex items-center justify-center">
+            <input
+              className="text-pocket-gray px-2 font-mono border rounded-md border-pocket-gray/20 w-full bg-pocket-gray/5 h-10"
+              value={address}
+              readOnly
+            />
+          </div>
+          {memo && <p className="text-pocket-gray">Memo: {memo}</p>}
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full gap-2"
+          disabled={isPending || !isValid}
+          onClick={(event) => {
+            setOpen(false);
+            event.preventDefault();
+            event.stopPropagation();
+            setTimeout(() => onClick());
+          }}
+        >
+          Send
+          <ArrowUpRight className="w-4 h-4" />
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export function useSendTransaction(): UseMutationResult<DeliverTxResponse, Error, SendTransaction> {
   return useMutation({
