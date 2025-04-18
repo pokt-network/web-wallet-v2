@@ -51,7 +51,7 @@ export function Send(): ReactNode {
           <ArrowUpRight className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="md:max-w-md">
         <DialogHeader>
           <DialogTitle>Send</DialogTitle>
         </DialogHeader>
