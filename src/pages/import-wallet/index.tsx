@@ -4,14 +4,36 @@ import { Link } from "wouter";
 import { Title } from "@/components/title";
 import { Container } from "@/components/container";
 import { PortablePrivateKey } from "./portable-private-key";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionContent,
+  AccordionTrigger,
+} from "@/components/accordion";
+import { PrivateKey } from "./private-key";
 
 export function ImportWallet(): React.ReactNode {
   return (
     <Container>
       <Title>Import Wallet</Title>
-      <p className="text-center">Upload your portable private key to import your wallet.</p>
+      <p className="text-center">
+        You can import your existing wallet using either a portable private key or a private key.
+      </p>
 
-      <PortablePrivateKey />
+      <Accordion type="single" collapsible className="flex flex-col gap-4">
+        <AccordionItem value="portable-private-key">
+          <AccordionTrigger>Use portable Private Key</AccordionTrigger>
+          <AccordionContent className="pt-2">
+            <PortablePrivateKey />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="private-key">
+          <AccordionTrigger>Use private Key</AccordionTrigger>
+          <AccordionContent className="pt-2">
+            <PrivateKey />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <p className="text-center">
         {"Don't have a wallet? "}

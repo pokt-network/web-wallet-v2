@@ -5,10 +5,10 @@ import { FileKey2, Loader2, Upload, XIcon } from "lucide-react";
 import { cx } from "@/cx";
 import { Button } from "@/components/button";
 import { PasswordInput } from "@/components/password-input";
-import { useImportWallet } from "@/wallet";
+import { useImportHDWallet } from "@/wallet";
 
 export function PortablePrivateKey(): React.ReactNode {
-  const importWallet = useImportWallet();
+  const importWallet = useImportHDWallet();
   const [password, setPassword] = useState("");
   const [file, setFile] = useState<File | null>(null);
 

@@ -14,12 +14,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { env } from "@/env";
 
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import {
+  DirectSecp256k1HdWallet,
+  DirectSecp256k1Wallet,
+  OfflineSigner,
+} from "@cosmjs/proto-signing";
 import { SigningStargateClient, coins, DeliverTxResponse } from "@cosmjs/stargate";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { useWalletStore } from "@/wallet";
 import { ErrorMessage } from "@/components/error-message";
 import { toast } from "sonner";
+import * as WalletEncryption from "../../wallet-encryption";
+import { fromHex } from "@cosmjs/encoding";
 
 const sendSchema = z.object({
   address: z.string().min(1, "Address is required"),
@@ -266,7 +272,16 @@ async function sendTransaction({
     throw new Error("No wallet found");
   }
 
-  const wallet = await DirectSecp256k1HdWallet.deserialize(walletState.serializedWallet, password);
+  let wallet: OfflineSigner;
+
+  if (walletState.type === "hd") {
+    wallet = await DirectSecp256k1HdWallet.deserialize(walletState.serializedWallet, password);
+  } else if (walletState.type === "private-key") {
+    const privateKey = await WalletEncryption.decrypt(walletState.serializedWallet, password);
+    wallet = await DirectSecp256k1Wallet.fromKey(fromHex(privateKey), "pokt");
+  } else {
+    throw new Error("Unsupported wallet type");
+  }
 
   const client = await SigningStargateClient.connectWithSigner(env.RPC_URL, wallet);
 
