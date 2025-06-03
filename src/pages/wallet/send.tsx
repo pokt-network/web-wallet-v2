@@ -19,8 +19,8 @@ import {
   DirectSecp256k1Wallet,
   OfflineSigner,
 } from "@cosmjs/proto-signing";
-import { SigningStargateClient, coins, DeliverTxResponse } from "@cosmjs/stargate";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { SigningStargateClient, coins, DeliverTxResponse, GasPrice } from "@cosmjs/stargate";
+import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { useWalletStore } from "@/wallet";
 import { ErrorMessage } from "@/components/error-message";
 import { toast } from "sonner";
@@ -37,6 +37,9 @@ const sendSchema = z.object({
 type SendForm = z.infer<typeof sendSchema>;
 
 export function Send(): ReactNode {
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+
   const form = useForm<SendForm>({
     resolver: zodResolver(sendSchema),
     defaultValues: {
@@ -47,10 +50,18 @@ export function Send(): ReactNode {
     },
   });
 
-  const send = useSendTransaction();
+  const send = useSendTransaction({
+    onSuccess: () => {
+      toast.success("Transaction sent successfully");
+      queryClient.invalidateQueries({ queryKey: ["balance"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      setOpen(false);
+      form.reset();
+    },
+  });
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full gap-2">
           Send
@@ -239,12 +250,14 @@ const ConfirmSendButton: FC<{
   );
 };
 
-export function useSendTransaction(): UseMutationResult<DeliverTxResponse, Error, SendTransaction> {
+export function useSendTransaction({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}): UseMutationResult<DeliverTxResponse, Error, SendTransaction> {
   return useMutation({
     mutationFn: sendTransaction,
-    onSuccess: () => {
-      console.log("Transaction sent successfully");
-    },
+    onSuccess,
     onError: (error) => {
       toast.error("Transaction failed: " + error.message);
       console.error("Transaction failed:", error);
@@ -283,12 +296,9 @@ async function sendTransaction({
     throw new Error("Unsupported wallet type");
   }
 
-  const client = await SigningStargateClient.connectWithSigner(env.RPC_URL, wallet);
-
-  const fee = {
-    amount: coins(200, "upokt"),
-    gas: "200000",
-  };
+  const client = await SigningStargateClient.connectWithSigner(env.RPC_URL, wallet, {
+    gasPrice: GasPrice.fromString("0.001upokt"),
+  });
 
   const sendMessage = {
     typeUrl: "/cosmos.bank.v1beta1.MsgSend",
@@ -299,7 +309,7 @@ async function sendTransaction({
     },
   };
 
-  const result = await client.signAndBroadcast(walletState.address, [sendMessage], fee, memo);
+  const result = await client.signAndBroadcast(walletState.address, [sendMessage], "auto", memo);
 
   if (result.code === 0) {
     return result;
