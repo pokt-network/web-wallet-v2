@@ -4,6 +4,7 @@ import { navigate } from "wouter/use-browser-location";
 import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import * as WalletEncryption from "./wallet-encryption";
+import { fromHex } from "@cosmjs/encoding";
 
 type WalletState =
   | {
@@ -62,7 +63,7 @@ type PrivateKeyImport = {
 export function useImportWallet(): UseMutationResult<void, Error, PrivateKeyImport> {
   return useMutation({
     mutationFn: async ({ privateKey, password }) => {
-      const wallet = await DirectSecp256k1Wallet.fromKey(Buffer.from(privateKey, "hex"), "pokt");
+      const wallet = await DirectSecp256k1Wallet.fromKey(fromHex(privateKey), "pokt");
       const address = await getAddress(wallet);
       const serializedWallet = await WalletEncryption.encrypt(privateKey, password);
       useWalletStore.setState({
