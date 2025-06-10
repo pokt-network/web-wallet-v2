@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 
 export function Home(): JSX.Element {
   return (
-    <div className="flex flex-col max-w-sm gap-4 px-4 py-16 mx-auto text-center lg:px-0">
+    <div className="flex flex-col max-w-[400px] gap-4 px-4 py-16 mx-auto text-center lg:px-0">
       <Title>
         Welcome to
         <br />
@@ -31,18 +31,25 @@ export function Home(): JSX.Element {
       </div>
 
       <Alert>
-        <p className="font-medium">Now supporting Unstoppable Domains!</p>
-        You can now use an unstoppable domain to send transactions. For more information, check out
-        our{" "}
-        <a
-          target="_blank"
-          className="underline"
-          rel="noopener noreferrer"
-          href="https://twitter.com/POKTnetwork/status/1625948417888292871"
-        >
-          announcement
-        </a>
-        .
+        <p className="font-medium">Pocket Network is now running on the Shannon upgrade.</p>
+
+        <div className="mt-2">
+          This wallet will not connect to Morse version accounts. An upgrade function will be
+          released for this wallet soon to migrate old accounts to the Shannon fork.
+        </div>
+
+        <p className="mt-2">
+          In the meantime, you may use the:{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-medium"
+            href="https://pocket.network/using-soothe-vault-to-prepare-for-the-shannon-upgrade/"
+          >
+            Soothe Wallet upgrade process
+          </a>{" "}
+          to claim your Morse account on Shannon.
+        </p>
       </Alert>
     </div>
   );
