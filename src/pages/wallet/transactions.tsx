@@ -1,4 +1,5 @@
 // import { usePrice } from "@/use-price";
+import { env } from "@/env";
 import { Button } from "@/components/button";
 import { formatPOKT } from "@/utils/format-pokt";
 import { formatAddress } from "@/utils/format-address";
@@ -219,7 +220,7 @@ function Transaction({
 
           <div className="flex items-center justify-end w-full mt-6">
             <a
-              href={`https://shannon.beta.testnet.pokt.network/pocket-beta/tx/${transaction.hash}`}
+              href={`${env.EXPLORER_URL}${transaction.hash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 text-pocket-blue underline"
