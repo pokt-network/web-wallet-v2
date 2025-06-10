@@ -74,6 +74,22 @@ export function Transactions(): React.ReactNode {
   );
 }
 
+function getTransactionFee(transaction: TypedTransaction): string | null {
+  for (const event of transaction.events) {
+    if (event.type !== "tx") {
+      continue;
+    }
+
+    for (const attribute of event.attributes) {
+      if (attribute.key === "fee") {
+        return attribute.value;
+      }
+    }
+  }
+
+  return null;
+}
+
 function Transaction({
   transaction,
   border,
@@ -82,6 +98,7 @@ function Transaction({
   border: boolean;
 }): React.ReactNode {
   const { data: block } = useBlock({ height: transaction.height });
+  const fee = getTransactionFee(transaction);
 
   return (
     <Dialog>
@@ -207,6 +224,8 @@ function Transaction({
                 </div>
               }
             />
+
+            {fee && <Row label="Fee:" value={fee} />}
           </div>
 
           <div className="mt-4">
