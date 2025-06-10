@@ -6,5 +6,15 @@ export function formatPOKT(uPokt: bigint): string {
   }
 
   const pokt = uPokt / UPOKT;
-  return pokt.toLocaleString("en-US", { maximumFractionDigits: 2 }) + " POKT";
+
+  const remainder = uPokt % UPOKT;
+  const decimalPart = (remainder * BigInt(100)) / UPOKT;
+
+  let formatted = pokt.toString();
+
+  if (decimalPart > 0) {
+    formatted += `.${decimalPart.toString().padStart(2, "0")}`;
+  }
+
+  return formatted + " POKT";
 }
