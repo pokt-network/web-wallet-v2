@@ -8,6 +8,7 @@ import { Send } from "./send";
 import { Logout } from "./logout-button";
 import { useWalletStore } from "@/wallet";
 import { navigate } from "wouter/use-browser-location";
+import { ShowPrivateKey } from "./private-key";
 
 export function Wallet(): React.ReactNode {
   const data = useWalletStore();
@@ -24,6 +25,7 @@ export function Wallet(): React.ReactNode {
       <Send />
       <Transactions />
       <Logout />
+      <ShowPrivateKey />
     </Container>
   );
 }

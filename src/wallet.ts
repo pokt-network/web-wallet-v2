@@ -107,3 +107,39 @@ async function getAddress(
 
   return account.address;
 }
+
+export type WalletSecret = {
+  type: "private-key" | "mnemonic";
+  value: string;
+};
+
+export function usePrivateKey(): UseMutationResult<WalletSecret, Error, { password: string }> {
+  return useMutation({
+    mutationFn: async ({ password }) => {
+      const walletState = useWalletStore.getState();
+
+      if (walletState.type === "hd") {
+        const wallet = await DirectSecp256k1HdWallet.deserialize(
+          walletState.serializedWallet,
+          password
+        );
+
+        return {
+          type: "mnemonic",
+          value: wallet.mnemonic,
+        };
+      }
+
+      if (walletState.type === "private-key") {
+        const privateKey = await WalletEncryption.decrypt(walletState.serializedWallet, password);
+
+        return {
+          type: "private-key",
+          value: privateKey,
+        };
+      }
+
+      throw new Error("Unsupported wallet type");
+    },
+  });
+}
