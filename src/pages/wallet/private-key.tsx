@@ -68,7 +68,7 @@ export function ShowPrivateKey(): ReactNode {
 
         {privateKey ? (
           <div>
-            <div className="text-sm bg-pocket-gray/10 rounded p-4 font-mono">
+            <div className="text-sm bg-pocket-gray/10 rounded p-4 font-mono break-all">
               {privateKey.value}
             </div>
             <Button
