@@ -78,6 +78,29 @@ export function useImportWallet(): UseMutationResult<void, Error, PrivateKeyImpo
   });
 }
 
+type MnemonicImport = {
+  mnemonic: string;
+  password: string;
+};
+
+export function useImportWalletMnemonic(): UseMutationResult<void, Error, MnemonicImport> {
+  return useMutation({
+    mutationFn: async ({ mnemonic, password }) => {
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: "pokt" });
+      const address = await getAddress(wallet);
+      const serializedWallet = await wallet.serialize(password);
+      useWalletStore.setState({
+        address,
+        serializedWallet,
+        type: "hd",
+      });
+    },
+    onSuccess: () => {
+      navigate("/wallet");
+    },
+  });
+}
+
 export function useCreateWallet(): UseMutationResult<void, Error, { password: string }> {
   return useMutation({
     mutationFn: async ({ password }) => {

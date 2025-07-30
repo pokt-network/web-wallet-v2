@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/accordion";
 import { PrivateKey } from "./private-key";
+import { MnemonicImport } from "./mnemonic";
 
 export function ImportWallet(): React.ReactNode {
   return (
@@ -31,6 +32,12 @@ export function ImportWallet(): React.ReactNode {
           <AccordionTrigger>Use private Key</AccordionTrigger>
           <AccordionContent className="pt-2">
             <PrivateKey />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="mnemonic">
+          <AccordionTrigger>Use Mnemonic</AccordionTrigger>
+          <AccordionContent className="pt-2">
+            <MnemonicImport />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

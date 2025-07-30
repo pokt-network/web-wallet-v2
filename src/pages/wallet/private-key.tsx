@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/components/error-message";
 import { toast } from "sonner";
-import { usePrivateKey, WalletSecret } from "@/wallet";
+import { usePrivateKey, useWalletStore, WalletSecret } from "@/wallet";
 
 const showPrivateKeySchema = z.object({
   password: z.string(),
@@ -24,6 +24,9 @@ type SendForm = z.infer<typeof showPrivateKeySchema>;
 
 export function ShowPrivateKey(): ReactNode {
   const showPrivateKey = usePrivateKey();
+
+  const { type } = useWalletStore.getState();
+  const secretLabel = type === "hd" ? "Mnemonic" : "Private Key";
 
   const [open, setOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState<WalletSecret | null>(null);
@@ -47,16 +50,16 @@ export function ShowPrivateKey(): ReactNode {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full gap-2" variant="ghost">
-          Show private Key
+          Show {secretLabel}
           <LockOpen className="w-4 h-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="md:max-w-md">
         <DialogHeader>
           {privateKey ? (
-            <DialogTitle>Your Private Key</DialogTitle>
+            <DialogTitle>Your {secretLabel}</DialogTitle>
           ) : (
-            <DialogTitle>Show Private Key</DialogTitle>
+            <DialogTitle>Show {secretLabel}</DialogTitle>
           )}
         </DialogHeader>
 
@@ -75,10 +78,10 @@ export function ShowPrivateKey(): ReactNode {
               className="w-full gap-2 mt-4"
               onClick={() => {
                 navigator.clipboard.writeText(privateKey.value);
-                toast.success("Private key copied to clipboard");
+                toast.success(`${secretLabel} copied to clipboard`);
               }}
             >
-              Copy Private Key
+              Copy {secretLabel}
             </Button>
           </div>
         ) : (
@@ -89,7 +92,7 @@ export function ShowPrivateKey(): ReactNode {
                 const result = await showPrivateKey.mutateAsync(data);
                 setPrivateKey(result);
               } catch {
-                toast.error("Failed to display private key");
+                toast.error(`Failed to display ${secretLabel}`);
               }
             })}
           >
@@ -119,7 +122,7 @@ export function ShowPrivateKey(): ReactNode {
               {showPrivateKey.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                "Show Private Key"
+                `Show ${secretLabel}`
               )}
             </Button>
           </form>
