@@ -29,7 +29,13 @@ import { fromHex } from "@cosmjs/encoding";
 
 const sendSchema = z.object({
   address: z.string().min(1, "Address is required"),
-  amount: z.number().positive().int().min(1, "Amount must be greater than 0"),
+  amount: z
+    .number({
+      required_error: "Amount is required",
+      invalid_type_error: "Amount must be a number",
+    })
+    .positive("Amount must be greater than 0")
+    .safe(),
   password: z.string(),
   memo: z.string().optional(),
 });
@@ -41,6 +47,7 @@ export function Send(): ReactNode {
   const queryClient = useQueryClient();
 
   const form = useForm<SendForm>({
+    mode: "all",
     resolver: zodResolver(sendSchema),
     defaultValues: {
       address: "",
@@ -110,7 +117,6 @@ export function Send(): ReactNode {
             </label>
             <Input
               placeholder="Enter the amount"
-              type="number"
               {...form.register("amount", {
                 valueAsNumber: true,
               })}
