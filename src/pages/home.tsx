@@ -40,11 +40,20 @@ export function Home(): JSX.Element {
             target="_blank"
             rel="noopener noreferrer"
             className="underline font-medium"
-            href="https://migration.shannon.nodefleet.net/wallet"
+            href="https://pocket.network/using-soothe-vault-to-prepare-for-the-shannon-upgrade/"
           >
             Soothe Wallet upgrade process
           </a>{" "}
-          or the web based migration tool to claim your Morse account on Shannon.
+          or the{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-medium"
+            href="https://migration.shannon.nodefleet.net/wallet"
+          >
+            web based migration tool
+          </a>{" "}
+          to claim your Morse account on Shannon.
         </div>
       </Alert>
     </div>
