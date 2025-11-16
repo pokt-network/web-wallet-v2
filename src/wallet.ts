@@ -4,7 +4,7 @@ import { navigate } from "wouter/use-browser-location";
 import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import * as WalletEncryption from "./wallet-encryption";
-import { fromHex } from "@cosmjs/encoding";
+import { fromHex, toHex } from "@cosmjs/encoding";
 
 type WalletState =
   | {
@@ -131,10 +131,16 @@ async function getAddress(
   return account.address;
 }
 
-export type WalletSecret = {
-  type: "private-key" | "mnemonic";
-  value: string;
-};
+export type WalletSecret =
+  | {
+      type: "private-key";
+      privateKey: string;
+    }
+  | {
+      type: "mnemonic";
+      privateKey: string;
+      mnemonic: string;
+    };
 
 export function usePrivateKey(): UseMutationResult<WalletSecret, Error, { password: string }> {
   return useMutation({
@@ -147,9 +153,12 @@ export function usePrivateKey(): UseMutationResult<WalletSecret, Error, { passwo
           password
         );
 
+        const [account] = await wallet["getAccountsWithPrivkeys"]();
+
         return {
           type: "mnemonic",
-          value: wallet.mnemonic,
+          privateKey: toHex(account.privkey),
+          mnemonic: wallet.mnemonic,
         };
       }
 
@@ -158,7 +167,7 @@ export function usePrivateKey(): UseMutationResult<WalletSecret, Error, { passwo
 
         return {
           type: "private-key",
-          value: privateKey,
+          privateKey,
         };
       }
 

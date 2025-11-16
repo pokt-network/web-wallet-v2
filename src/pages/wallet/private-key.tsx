@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorMessage } from "@/components/error-message";
 import { toast } from "sonner";
-import { usePrivateKey, useWalletStore, WalletSecret } from "@/wallet";
+import { usePrivateKey, WalletSecret } from "@/wallet";
 
 const showPrivateKeySchema = z.object({
   password: z.string(),
@@ -24,9 +24,6 @@ type SendForm = z.infer<typeof showPrivateKeySchema>;
 
 export function ShowPrivateKey(): ReactNode {
   const showPrivateKey = usePrivateKey();
-
-  const { type } = useWalletStore.getState();
-  const secretLabel = type === "hd" ? "Mnemonic" : "Private Key";
 
   const [open, setOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState<WalletSecret | null>(null);
@@ -50,16 +47,16 @@ export function ShowPrivateKey(): ReactNode {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="w-full gap-2" variant="ghost">
-          Show {secretLabel}
+          Show Private Key
           <LockOpen className="w-4 h-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="md:max-w-md">
         <DialogHeader>
           {privateKey ? (
-            <DialogTitle>Your {secretLabel}</DialogTitle>
+            <DialogTitle>Your Private Key</DialogTitle>
           ) : (
-            <DialogTitle>Show {secretLabel}</DialogTitle>
+            <DialogTitle>Show Private Key</DialogTitle>
           )}
         </DialogHeader>
 
@@ -72,17 +69,35 @@ export function ShowPrivateKey(): ReactNode {
         {privateKey ? (
           <div>
             <div className="text-sm bg-pocket-gray/10 rounded p-4 font-mono break-all">
-              {privateKey.value}
+              {privateKey.privateKey}
             </div>
             <Button
               className="w-full gap-2 mt-4"
               onClick={() => {
-                navigator.clipboard.writeText(privateKey.value);
-                toast.success(`${secretLabel} copied to clipboard`);
+                navigator.clipboard.writeText(privateKey.privateKey);
+                toast.success("Private Key copied to clipboard");
               }}
             >
-              Copy {secretLabel}
+              Copy Private Key
             </Button>
+
+            {privateKey.type === "mnemonic" && (
+              <div className="mt-6">
+                <h2 className="text-base font-medium mb-2">Mnemonic Phrase</h2>
+                <div className="text-sm bg-pocket-gray/10 rounded p-4 font-mono break-all">
+                  {privateKey.mnemonic}
+                </div>
+                <Button
+                  className="w-full gap-2 mt-4"
+                  onClick={() => {
+                    navigator.clipboard.writeText(privateKey.mnemonic);
+                    toast.success("Mnemonic Phrase copied to clipboard");
+                  }}
+                >
+                  Copy Mnemonic Phrase
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <form
@@ -92,7 +107,7 @@ export function ShowPrivateKey(): ReactNode {
                 const result = await showPrivateKey.mutateAsync(data);
                 setPrivateKey(result);
               } catch {
-                toast.error(`Failed to display ${secretLabel}`);
+                toast.error("Failed to display Private Key");
               }
             })}
           >
@@ -122,7 +137,7 @@ export function ShowPrivateKey(): ReactNode {
               {showPrivateKey.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                `Show ${secretLabel}`
+                `Show Private Key`
               )}
             </Button>
           </form>
